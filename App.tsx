@@ -1,16 +1,31 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
 import CartDrawer from './components/CartDrawer';
 import AIChef from './components/AIChef';
+import { AdminLogin, AdminDashboard } from './components/AdminPanel';
 import { PRODUCTS } from './constants';
 import { Product, CartItem } from './types';
 
 const App: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+
+  // Direct Admin Link Logic (#admin)
+  useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash === '#admin') {
+        setShowAdminLogin(true);
+      }
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   const addToCart = useCallback((product: Product) => {
     setCart(prev => {
@@ -25,6 +40,10 @@ const App: React.FC = () => {
 
   const removeFromCart = useCallback((id: string) => {
     setCart(prev => prev.filter(item => item.id !== id));
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setCart([]);
   }, []);
 
   const updateQuantity = useCallback((id: string, delta: number) => {
@@ -52,6 +71,7 @@ const App: React.FC = () => {
         cartCount={totalItems} 
         onOpenCart={() => setIsCartOpen(true)} 
         onScrollTo={scrollTo}
+        onAdminClick={() => setShowAdminLogin(true)}
       />
       
       <Hero onExplore={() => scrollTo('products')} />
@@ -149,7 +169,7 @@ const App: React.FC = () => {
             <div>
               <h4 className="font-bold mb-6 text-lg">Support</h4>
               <ul className="space-y-4 text-gray-400">
-                <li className="text-sm">Bulk Inquiries</li>
+                <li><button onClick={() => setShowAdminLogin(true)} className="hover:text-amber-500 text-sm text-left">Admin Portal</button></li>
                 <li className="text-sm">Track Order</li>
                 <li className="text-sm">Quality Guarantee</li>
               </ul>
@@ -167,7 +187,29 @@ const App: React.FC = () => {
         items={cart}
         onRemove={removeFromCart}
         onUpdateQuantity={updateQuantity}
+        clearCart={clearCart}
       />
+
+      {/* Admin Flow */}
+      {showAdminLogin && (
+        <AdminLogin 
+          onLogin={() => {
+            setIsAdminAuthenticated(true);
+            setShowAdminLogin(false);
+          }} 
+          onCancel={() => {
+            setShowAdminLogin(false);
+            window.location.hash = ""; // Clear hash on cancel
+          }}
+        />
+      )}
+
+      {isAdminAuthenticated && (
+        <AdminDashboard onClose={() => {
+          setIsAdminAuthenticated(false);
+          window.location.hash = ""; // Clear hash on close
+        }} />
+      )}
     </div>
   );
 };

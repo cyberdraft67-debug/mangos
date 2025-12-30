@@ -1,9 +1,9 @@
 
 import { Product } from './types';
 
-export const WHATSAPP_NUMBER = '923332175625';
+export const ORDER_NOTIFICATION_EMAIL = 'cyberdraft67@gmail.com';
 
-// Your production Google Sheets Webhook URL
+// Your production Google Sheets Webhook URL (Kept as secondary backup if needed)
 export const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwiT8P7UEBHRO8BymwpuWh_Zl08CDJ9RRP3UW9QhaVuVA94hV3I2ZkH5Az6zf_7VJFY/exec';
 
 export const PRODUCTS: Product[] = [

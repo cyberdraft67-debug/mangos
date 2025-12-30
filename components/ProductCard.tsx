@@ -11,12 +11,20 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   const [showReviews, setShowReviews] = useState(false);
   const [showAddReview, setShowAddReview] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
   const [reviews, setReviews] = useState<Review[]>(product.reviews);
   const [newReview, setNewReview] = useState({ userName: '', rating: 5, comment: '' });
 
   const averageRating = reviews.length > 0 
     ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
     : 'New';
+
+  const handleAddToCartClick = () => {
+    if (product.stock <= 0 || isAdded) return;
+    onAddToCart(product);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
 
   const handleAddReview = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,12 +83,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           {stockStatus.label} {product.stock > 0 && product.stock <= 10 && `(${product.stock})`}
         </div>
 
-        {/* Category Label - Bottom Right to prevent overlap */}
+        {/* Category Label - Bottom Right */}
         <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur px-4 py-1.5 rounded-full text-amber-800 text-[10px] font-black shadow-lg uppercase tracking-widest border border-amber-100 z-10">
           {product.category}
         </div>
         
-        {/* Subtle overlay gradient to ensure labels are readable against busy images */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/10 pointer-events-none"></div>
       </div>
       
@@ -102,23 +109,53 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{product.unit}</span>
           <button 
-            onClick={() => onAddToCart(product)}
+            onClick={handleAddToCartClick}
             disabled={product.stock <= 0}
-            className={`relative flex items-center space-x-3 px-8 py-3.5 rounded-2xl font-black transition-all active:scale-95 group overflow-hidden ${
+            className={`relative flex items-center justify-center space-x-3 px-8 py-3.5 rounded-2xl font-black transition-all active:scale-95 group overflow-hidden min-w-[160px] ${
               product.stock <= 0 
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+              : isAdded 
+              ? 'bg-emerald-500 text-white shadow-[0_8px_20px_rgba(16,185,129,0.25)]'
               : 'bg-amber-500 hover:bg-amber-600 text-white shadow-[0_8px_20px_rgba(245,158,11,0.25)]'
             }`}
           >
-            {product.stock <= 0 ? (
-              <span>Out of Stock</span>
-            ) : (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-12 transition-transform"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                <span>Add to Cart</span>
-              </>
+            <AnimatePresence mode="wait">
+              {product.stock <= 0 ? (
+                <motion.span 
+                  key="out"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  Out of Stock
+                </motion.span>
+              ) : isAdded ? (
+                <motion.div 
+                  key="added"
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                  className="flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  <span>Added!</span>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="add"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-12 transition-transform"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  <span>Add to Cart</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {!isAdded && product.stock > 0 && (
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             )}
-            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </button>
         </div>
 

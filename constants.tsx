@@ -1,7 +1,10 @@
 
 import { Product } from './types';
 
-export const WHATSAPP_NUMBER = '923332175625'; // Updated to user-provided number
+export const WHATSAPP_NUMBER = '923332175625';
+
+// Your production Google Sheets Webhook URL
+export const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwiT8P7UEBHRO8BymwpuWh_Zl08CDJ9RRP3UW9QhaVuVA94hV3I2ZkH5Az6zf_7VJFY/exec';
 
 export const PRODUCTS: Product[] = [
   {
@@ -51,7 +54,7 @@ export const PRODUCTS: Product[] = [
     category: 'Premium',
     stock: 2,
     reviews: [
-      { id: 'r4', userName: 'Elena R.', rating: 5, comment: 'Incredible size and deep yellow color. Each mango is massive!', date: '2024-05-15' }
+      { id: 'r4', userName: 'Elena R.', rating: 5, comment: 'Incredible size and deep yellow color. Each massive mango is roughly half a kg!', date: '2024-05-15' }
     ]
   }
 ];

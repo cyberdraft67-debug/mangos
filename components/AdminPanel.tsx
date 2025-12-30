@@ -123,7 +123,7 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
         <div className="flex items-center gap-3">
           <button 
             onClick={handleDownloadLedgerPDF} 
-            className="flex items-center gap-2 bg-white border border-gray-200 px-5 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-amber-50 hover:border-amber-200 transition-all text-gray-600"
+            className="flex items-center gap-2 bg-white border border-gray-200 px-5 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-amber-50 hover:border-amber-200 transition-all text-gray-600 shadow-sm"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
             Download PDF

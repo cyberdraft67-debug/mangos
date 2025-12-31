@@ -20,6 +20,8 @@ const App: React.FC = () => {
     const handleHash = () => {
       if (window.location.hash === '#admin') {
         setShowAdminLogin(true);
+      } else {
+        setShowAdminLogin(false);
       }
     };
     handleHash();
@@ -71,7 +73,6 @@ const App: React.FC = () => {
         cartCount={totalItems} 
         onOpenCart={() => setIsCartOpen(true)} 
         onScrollTo={scrollTo}
-        onAdminClick={() => setShowAdminLogin(true)}
       />
       
       <Hero onExplore={() => scrollTo('products')} />
@@ -169,7 +170,7 @@ const App: React.FC = () => {
             <div>
               <h4 className="font-bold mb-6 text-lg">Support</h4>
               <ul className="space-y-4 text-gray-400">
-                <li><button onClick={() => setShowAdminLogin(true)} className="hover:text-amber-500 text-sm text-left">Admin Portal</button></li>
+                <li className="text-sm">Contact Support</li>
                 <li className="text-sm">Track Order</li>
                 <li className="text-sm">Quality Guarantee</li>
               </ul>

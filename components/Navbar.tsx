@@ -5,10 +5,9 @@ interface NavbarProps {
   cartCount: number;
   onOpenCart: () => void;
   onScrollTo: (id: string) => void;
-  onAdminClick?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, onScrollTo, onAdminClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, onScrollTo }) => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-amber-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,12 +27,6 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, onScrollTo, onAd
           </div>
 
           <div className="flex items-center space-x-4">
-            <button 
-              onClick={onAdminClick}
-              className="text-[10px] font-black text-gray-400 hover:text-amber-600 transition-colors uppercase tracking-widest"
-            >
-              HQ
-            </button>
             <button 
               onClick={onOpenCart}
               className="relative p-2.5 bg-amber-100 rounded-full text-amber-700 hover:bg-amber-200 transition-colors"

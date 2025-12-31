@@ -127,24 +127,22 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Invoice Status</p>
                     <p className="text-sm font-bold text-gray-800 flex items-center gap-2">
                       <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                      PDF Invoice Generated
+                      PDF Invoice Downloaded
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Email Routing</p>
-                    <p className="text-sm font-medium text-gray-600 leading-relaxed">
-                      Confirmed to <span className="text-amber-600 font-bold">cyberdraft67@gmail.com</span>.
-                    </p>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Dispatch Area</p>
+                    <p className="text-sm font-black text-amber-600">Karachi Delivery Hub</p>
                   </div>
                 </div>
 
                 <div className="w-full space-y-3">
                   <button 
                     onClick={handleDownloadInvoice}
-                    className="w-full py-5 bg-white border-2 border-amber-500 text-amber-600 hover:bg-amber-50 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3"
+                    className="w-full py-5 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3 shadow-lg shadow-amber-500/20"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                    Download PDF Invoice
+                    Download PDF Again
                   </button>
                   <button 
                     onClick={handleGmailDispatch}
@@ -157,7 +155,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                     onClick={handleCloseSuccess}
                     className="w-full py-5 bg-gray-900 hover:bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all"
                   >
-                    Go Shopping
+                    Back to Orchards
                   </button>
                 </div>
               </div>
@@ -185,6 +183,16 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                     </div>
                   ) : (
                     <div className="space-y-8 pb-12">
+                      <div className="bg-red-50 border border-red-100 p-6 rounded-3xl">
+                        <div className="flex items-center gap-3 text-red-600 mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                          <span className="text-[11px] font-black uppercase tracking-widest">Delivery Notice</span>
+                        </div>
+                        <p className="text-xs font-bold text-red-700 leading-relaxed">
+                          We currently deliver <span className="underline">Exclusively to Karachi</span>. Orders from other cities will not be processed at this time.
+                        </p>
+                      </div>
+
                       <div className="space-y-4">
                         {items.map(item => (
                           <div key={item.id} className="flex gap-4 p-4 bg-white rounded-3xl border border-gray-100 shadow-sm">
@@ -206,7 +214,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                       </div>
 
                       <div className="bg-white p-8 rounded-[2.5rem] border border-amber-100 shadow-sm space-y-6">
-                        <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs">Delivery Details</h3>
+                        <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs">Karachi Shipping Details</h3>
                         <div className="space-y-4">
                           <input 
                             type="text" 
@@ -228,7 +236,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                             disabled={isProcessing}
                             value={customerInfo.address}
                             onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
-                            placeholder="Exact Shipping Address"
+                            placeholder="Exact Address (KARACHI ONLY)"
                             className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.address ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm min-h-[100px] disabled:opacity-50`}
                           />
                           {showValidation && (!customerInfo.name || !customerInfo.phone || !customerInfo.address) && (
@@ -258,7 +266,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                         </span>
                       ) : "Confirm Order"}
                     </button>
-                    <p className="text-center text-[9px] text-gray-400 font-black uppercase tracking-[0.4em] mt-8">Logged to Database • PDF Generating</p>
+                    <p className="text-center text-[9px] text-gray-400 font-black uppercase tracking-[0.4em] mt-8">Logged to HQ Database • PDF Invoice Ready</p>
                   </div>
                 )}
               </>

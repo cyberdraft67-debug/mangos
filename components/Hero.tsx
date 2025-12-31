@@ -47,6 +47,16 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
           transition={{ duration: 1, ease: "easeOut" }}
           className="max-w-4xl mx-auto"
         >
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mb-6 inline-flex items-center gap-3 px-6 py-2 bg-amber-500/20 backdrop-blur border border-amber-400/30 rounded-full"
+          >
+            <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+            <span className="text-amber-400 text-[10px] font-black uppercase tracking-[0.4em]">Karachi Regional Exclusive</span>
+          </motion.div>
+
           <motion.h1 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -90,7 +100,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             >
               <div className="h-px w-8 bg-amber-400/50"></div>
               <p className="text-amber-400 font-bold uppercase tracking-[0.3em] text-xs">
-                Limited Peak-Season Availability
+                Peak-Season Delivery in Karachi
               </p>
               <div className="h-px w-8 bg-amber-400/50"></div>
             </motion.div>

@@ -10,9 +10,9 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, onScrollTo }) => {
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
-      {/* Delivery Notice Bar */}
-      <div className="bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.3em] py-2 text-center px-4">
-        Exclusively Serving Karachi • Same-Day Fresh Harvest Dispatch
+      {/* Global Delivery Policy Bar */}
+      <div className="bg-amber-600 text-white text-[10px] md:text-xs font-black uppercase tracking-[0.3em] py-2.5 text-center px-4 shadow-sm">
+        Premium Chaunsa: Exclusively Serving Karachi & Nearby Areas Only
       </div>
       
       <nav className="glass border-b border-amber-100">

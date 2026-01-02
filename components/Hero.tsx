@@ -35,11 +35,11 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
         </video>
       </motion.div>
 
-      {/* Static Overlays (Not moving with the background) */}
+      {/* Static Overlays */}
       <div className="absolute inset-0 z-[1] bg-black/40 backdrop-blur-[0.5px]"></div>
       <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/90 via-black/20 to-black/30"></div>
 
-      {/* Hero Content with Framer Motion */}
+      {/* Hero Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 text-center">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -73,7 +73,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             transition={{ delay: 0.6, duration: 1 }}
             className="text-xl md:text-2xl mb-12 text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-lg"
           >
-            Savor the royalty of orchards. Directly from nature's lap to your door, the finest honey-sweet harvest of the season.
+            Savor the royalty of orchards. Directly from nature's lap to your door. <br/> <span className="text-amber-400 font-bold">Serving Karachi Only.</span>
           </motion.p>
 
           <motion.div 
@@ -99,33 +99,15 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
               className="flex items-center gap-3"
             >
               <div className="h-px w-8 bg-amber-400/50"></div>
-              <p className="text-amber-400 font-bold uppercase tracking-[0.3em] text-xs">
-                Peak-Season Delivery in Karachi
-              </p>
+              <p className="text-amber-400 text-[10px] font-black uppercase tracking-[0.4em]">Scroll to Discover</p>
               <div className="h-px w-8 bg-amber-400/50"></div>
             </motion.div>
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Elegant Scroll indicator */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
-      >
-        <span className="text-[10px] text-white/50 font-bold uppercase tracking-widest">Explore Selection</span>
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center p-1.5">
-          <motion.div 
-            animate={{ y: [0, 12, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-            className="w-1 h-1.5 bg-white rounded-full"
-          />
-        </div>
-      </motion.div>
     </div>
   );
 };
 
+// Fix: Add default export for Hero component
 export default Hero;

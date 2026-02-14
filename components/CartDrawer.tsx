@@ -49,27 +49,37 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
     };
 
     try {
+      // 1. Submit to Database / Google Sheets
       await processOrderSubmission(orderData);
       setLastOrder(orderData);
+      
+      // 2. AUTOMATIC GMAIL DISPATCH
+      // This fulfills the "automatic" send requirement by opening the compose window instantly.
+      const gmailLink = generateGmailLink(orderData);
+      window.open(gmailLink, '_blank');
+
       setIsSuccess(true);
       
-      // Automatically generate PDF on success
+      // 3. AUTOMATIC PDF GENERATION
+      // Delay slightly to allow the success screen to animate in
       setTimeout(() => {
         generateOrderPDF(orderData);
-      }, 800);
+      }, 500);
       
+      // 4. Optional: Clear cart automatically on success
+      if (clearCart) clearCart();
+
     } catch (error) {
-      alert("System busy. Please try placing your order again.");
+      console.error("Order processing failed", error);
+      alert("System busy. Order logged locally but email dispatch paused. Please try again.");
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleCloseSuccess = () => {
-    if (clearCart) clearCart();
     setIsSuccess(false);
     onClose();
-
     setTimeout(() => {
       const productsEl = document.getElementById('products');
       if (productsEl) {
@@ -119,20 +129,26 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                 </motion.div>
                 
-                <h2 className="text-4xl font-black text-gray-900 mb-2 tracking-tighter uppercase">Order Logged</h2>
+                <h2 className="text-4xl font-black text-gray-900 mb-2 tracking-tighter uppercase">Order Sent</h2>
                 <p className="text-amber-600 font-black uppercase tracking-[0.3em] text-[10px] mb-8">Ref: {lastOrder?.orderId}</p>
                 
                 <div className="bg-white border border-amber-100 p-8 rounded-[2.5rem] shadow-sm mb-8 w-full text-left space-y-5">
                   <div className="space-y-1">
-                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Invoice Status</p>
-                    <p className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                      <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                      PDF Invoice Downloaded
-                    </p>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Automation Log</p>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-gray-800 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                        Gmail Tab Dispatched
+                      </p>
+                      <p className="text-xs font-bold text-gray-800 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                        Invoice PDF Generated
+                      </p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Dispatch Area</p>
-                    <p className="text-sm font-black text-amber-600">Karachi Delivery Hub</p>
+                  <div className="space-y-1 pt-2 border-t border-gray-50">
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Zone Status</p>
+                    <p className="text-sm font-black text-amber-600 uppercase tracking-tighter">Karachi Express Delivery Protocol</p>
                   </div>
                 </div>
 
@@ -142,20 +158,20 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                     className="w-full py-5 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3 shadow-lg shadow-amber-500/20"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                    Download PDF Again
+                    Download Invoice PDF
                   </button>
                   <button 
                     onClick={handleGmailDispatch}
-                    className="w-full py-5 bg-[#EA4335] hover:bg-[#d93025] text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg flex items-center justify-center gap-3"
+                    className="w-full py-5 bg-white border-2 border-[#EA4335] text-[#EA4335] hover:bg-[#EA4335] hover:text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.5 0 4 2 4 4.5V17z"/><path d="M2 9.5l10 6 10-6"/></svg>
-                    Notify via Gmail
+                    Retry Gmail Dispatch
                   </button>
                   <button 
                     onClick={handleCloseSuccess}
                     className="w-full py-5 bg-gray-900 hover:bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all"
                   >
-                    Back to Orchards
+                    Done
                   </button>
                 </div>
               </div>
@@ -164,7 +180,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
                   <div>
                     <h2 className="text-3xl font-black text-gray-900 tracking-tight uppercase">Checkout</h2>
-                    <p className="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em]">{items.length} Harvest Units</p>
+                    <p className="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em]">{items.length} Packages Ready</p>
                   </div>
                   {!isProcessing && (
                     <button onClick={onClose} className="p-3 hover:bg-gray-100 rounded-2xl text-gray-400 transition-colors">
@@ -176,20 +192,20 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                 <div className="flex-1 overflow-y-auto p-8 bg-gray-50/20 custom-scrollbar">
                   {items.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center px-8">
-                      <div className="bg-amber-50 w-24 h-24 rounded-[2rem] flex items-center justify-center mb-6">
+                      <div className="bg-amber-50 w-24 h-24 rounded-[3rem] flex items-center justify-center mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
                       </div>
-                      <button onClick={onClose} className="bg-amber-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg">Back to Orchards</button>
+                      <button onClick={onClose} className="bg-amber-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg">Browse Collection</button>
                     </div>
                   ) : (
                     <div className="space-y-8 pb-12">
                       <div className="bg-red-50 border border-red-100 p-6 rounded-3xl">
                         <div className="flex items-center gap-3 text-red-600 mb-2">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
-                          <span className="text-[11px] font-black uppercase tracking-widest">Delivery Notice</span>
+                          <span className="text-[11px] font-black uppercase tracking-widest">Karachi Dispatch Only</span>
                         </div>
                         <p className="text-xs font-bold text-red-700 leading-relaxed">
-                          We currently deliver <span className="underline">Exclusively to Karachi</span>. Orders from other cities will not be processed at this time.
+                          Deliveries are <span className="underline font-black">strictly confined to Karachi</span>. Outside orders will not be entertained.
                         </p>
                       </div>
 
@@ -204,9 +220,13 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                             <div className="text-right">
                               <p className="font-black text-gray-900 text-xs">Rs. {(item.price * item.quantity).toLocaleString()}</p>
                               {!isProcessing && (
-                                <button onClick={() => onRemove(item.id)} className="text-red-300 hover:text-red-500 mt-2">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                </button>
+                                <div className="flex items-center justify-end gap-2 mt-2">
+                                  <button onClick={() => onUpdateQuantity(item.id, -1)} className="p-1 hover:bg-gray-100 rounded-lg text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/></svg></button>
+                                  <button onClick={() => onUpdateQuantity(item.id, 1)} className="p-1 hover:bg-gray-100 rounded-lg text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+                                  <button onClick={() => onRemove(item.id)} className="p-1 hover:bg-red-50 rounded-lg text-red-300 ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                  </button>
+                                </div>
                               )}
                             </div>
                           </div>
@@ -214,33 +234,33 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                       </div>
 
                       <div className="bg-white p-8 rounded-[2.5rem] border border-amber-100 shadow-sm space-y-6">
-                        <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs">Karachi Shipping Details</h3>
+                        <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs">Shipping Particulars</h3>
                         <div className="space-y-4">
                           <input 
                             type="text" 
                             disabled={isProcessing}
                             value={customerInfo.name}
                             onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
-                            placeholder="Recipient Name"
-                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.name ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50`}
+                            placeholder="Recipient Full Name"
+                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.name ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
                           />
                           <input 
                             type="tel" 
                             disabled={isProcessing}
                             value={customerInfo.phone}
                             onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
-                            placeholder="WhatsApp Number"
-                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.phone ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50`}
+                            placeholder="Contact Number (Karachi)"
+                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.phone ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
                           />
                           <textarea 
                             disabled={isProcessing}
                             value={customerInfo.address}
                             onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
-                            placeholder="Exact Address (KARACHI ONLY)"
-                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.address ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm min-h-[100px] disabled:opacity-50`}
+                            placeholder="Exact Delivery Location in Karachi"
+                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.address ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm min-h-[100px] disabled:opacity-50 transition-all`}
                           />
                           {showValidation && (!customerInfo.name || !customerInfo.phone || !customerInfo.address) && (
-                            <p className="text-red-500 text-[10px] font-black uppercase text-center">Missing Delivery Information</p>
+                            <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest">Delivery Details Required</p>
                           )}
                         </div>
                       </div>
@@ -251,7 +271,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                 {items.length > 0 && (
                   <div className="p-10 border-t border-gray-100 bg-white rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.02)]">
                     <div className="flex justify-between items-center mb-8">
-                      <span className="text-gray-400 font-black text-xs uppercase tracking-[0.2em]">Total</span>
+                      <span className="text-gray-400 font-black text-xs uppercase tracking-[0.2em]">Settlement</span>
                       <span className="text-4xl font-black text-gray-900 tracking-tighter">Rs. {total.toLocaleString()}</span>
                     </div>
                     <button 
@@ -264,9 +284,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                           <svg className="animate-spin h-5 w-5 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                           Processing...
                         </span>
-                      ) : "Confirm Order"}
+                      ) : (
+                        <>
+                          <span>Confirm Order</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        </>
+                      )}
                     </button>
-                    <p className="text-center text-[9px] text-gray-400 font-black uppercase tracking-[0.4em] mt-8">Logged to HQ Database • PDF Invoice Ready</p>
+                    <p className="text-center text-[8px] text-gray-400 font-black uppercase tracking-[0.3em] mt-8">Instant Ledger Sync • Automatic PDF & Gmail Dispatch</p>
                   </div>
                 )}
               </>

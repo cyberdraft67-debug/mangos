@@ -130,7 +130,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                 </motion.div>
                 
-                <h2 className="text-4xl font-black text-gray-900 mb-2 tracking-tighter uppercase">Order Sent</h2>
+                <h2 className="text-4xl font-black text-gray-900 mb-2 tracking-tighter uppercase">Order Successfully Confirmed</h2>
                 <p className="text-amber-600 font-black uppercase tracking-[0.3em] text-[10px] mb-8">Ref: {lastOrder?.orderId}</p>
                 
                 <div className="bg-white border border-amber-100 p-8 rounded-[2.5rem] shadow-sm mb-8 w-full text-left space-y-5">

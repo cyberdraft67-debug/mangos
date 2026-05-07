@@ -4,7 +4,6 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
 import CartDrawer from './components/CartDrawer';
-import AIChef from './components/AIChef';
 import { AdminLogin, AdminDashboard } from './components/AdminPanel';
 import { PRODUCTS } from './constants';
 import { Product, CartItem } from './types';
@@ -88,8 +87,6 @@ const App: React.FC = () => {
           </div>
         </div>
       </section>
-
-      <AIChef />
 
       <CartDrawer
         isOpen={isCartOpen}

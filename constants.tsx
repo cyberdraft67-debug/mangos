@@ -3,8 +3,9 @@ import { Product } from './types';
 
 export const ORDER_NOTIFICATION_EMAIL = 'cyberdraft67@gmail.com';
 
-// Your production Google Sheets Webhook URL (Kept as secondary backup if needed)
-export const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwiT8P7UEBHRO8BymwpuWh_Zl08CDJ9RRP3UW9QhaVuVA94hV3I2ZkH5Az6zf_7VJFY/exec';
+// Your production Excel/Spreadsheet Webhook URL
+// To get this, use Make.com or Zapier to create a webhook that writes to Excel
+export const SPREADSHEET_WEBHOOK_URL = import.meta.env.VITE_EXCEL_WEBHOOK_URL || 'https://hook.eu1.make.com/zdad5cs86ehxvko0q7vqihtatp5w5cf9';
 
 export const PRODUCTS: Product[] = [
   {
@@ -47,7 +48,7 @@ export const PRODUCTS: Product[] = [
   {
     id: '4',
     name: 'XL Premium Sovereign Box',
-    description: 'The apex of our harvest. This exclusive selection features monolithic Chaunsa specimens, where each individual fruit weighs an astounding half-kilogram. These heritage giants represent the peak of sugar concentration and velvety texture.',
+    description: 'The apex of our harvest. This exclusive selection features monolithic Chaunsa specimens, where each individual fruit weighs an astounding half-kilogram. These golden giants represent the peak of sugar concentration and velvety texture.',
     price: 4000,
     unit: '4.5kg - 5kg XL Premium Box',
     image: 'https://pictures.grocerapps.com/original/grocerapp-mango-white-chaunsa-5kg-box-64958fcfea299.png',

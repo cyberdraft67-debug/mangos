@@ -1,5 +1,5 @@
 
-import { ORDER_NOTIFICATION_EMAIL, GOOGLE_SHEETS_WEBHOOK_URL } from "../constants";
+import { ORDER_NOTIFICATION_EMAIL, SPREADSHEET_WEBHOOK_URL } from "../constants";
 import { CartItem } from "../types";
 
 export interface OrderData {
@@ -20,7 +20,7 @@ export interface OrderData {
  * Submits the order to your provided database webhook and saves to local persistence.
  */
 export async function processOrderSubmission(order: OrderData) {
-  console.log(`[Database] Submitting Order ${order.orderId}`);
+  console.log(`[Database] Submitting Order ${order.orderId} to Excel/Spreadsheet`);
   
   // 1. Save to Local Persistence for Admin Panel visibility
   const existingOrders = JSON.parse(localStorage.getItem('chaunsa_orders') || '[]');
@@ -30,20 +30,27 @@ export async function processOrderSubmission(order: OrderData) {
     ...order,
     itemSummary: order.items.map(i => `${i.quantity}x ${i.name} (${i.unit})`).join(', '),
     action: "NEW_ORDER",
-    recipient: ORDER_NOTIFICATION_EMAIL
+    recipient: ORDER_NOTIFICATION_EMAIL,
+    source: "Heritage Reserve Web Store"
   };
 
   try {
-    await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+    const response = await fetch(SPREADSHEET_WEBHOOK_URL, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
+    
+    if (!response.ok) {
+      throw new Error(`Webhook responded with status ${response.status}`);
+    }
+
     return { success: true, orderId: order.orderId };
   } catch (error) {
-    console.error("Database connection error:", error);
-    return { success: true, orderId: order.orderId };
+    console.error("Spreadsheet connection error:", error);
+    // Even if webhook fails, we return success: true because the order is saved locally 
+    // and the user shouldn't be blocked, but we've logged the error for debugging.
+    return { success: true, orderId: order.orderId, error: "Cloud sync pending" };
   }
 }
 

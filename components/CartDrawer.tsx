@@ -29,6 +29,8 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  const [syncError, setSyncError] = useState<string | null>(null);
+
   const handleCheckout = async () => {
     if (items.length === 0 || isProcessing) return;
     
@@ -38,6 +40,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
     }
 
     setIsProcessing(true);
+    setSyncError(null);
 
     const orderId = `CH-${Date.now().toString().slice(-6)}`;
     const orderData: OrderData = {
@@ -51,7 +54,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
 
     try {
       // 1. Submit to Database / Google Sheets
-      await processOrderSubmission(orderData);
+      const result = await processOrderSubmission(orderData);
+      if (result.error) {
+        setSyncError(result.error);
+      }
+      
       setLastOrder(orderData);
       
       // 2. AUTOMATIC GMAIL DISPATCH
@@ -145,6 +152,17 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
                         Invoice PDF Generated
                       </p>
+                      {syncError ? (
+                        <p className="text-xs font-bold text-amber-600 flex items-center gap-2 bg-amber-50 p-2 rounded-lg border border-amber-100">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                          Cloud Sync: {syncError}
+                        </p>
+                      ) : (
+                        <p className="text-xs font-bold text-gray-800 flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                          Cloud Ledger Updated
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-1 pt-2 border-t border-gray-50">

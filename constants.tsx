@@ -47,7 +47,7 @@ export const PRODUCTS: Product[] = [
   {
     id: '4',
     name: 'XL Premium Sovereign Box',
-    description: 'The apex of our harvest. This exclusive selection features monolithic Chaunsa specimens, where each individual fruit weighs an astounding half-kilogram. These golden giants represent the peak of sugar concentration and velvety texture.',
+    description: 'The apex of our harvest. This exclusive selection features monolithic Chaunsa specimens, where each individual fruit weighs an astounding half-kilogram. These heritage giants represent the peak of sugar concentration and velvety texture.',
     price: 4000,
     unit: '4.5kg - 5kg XL Premium Box',
     image: 'https://pictures.grocerapps.com/original/grocerapp-mango-white-chaunsa-5kg-box-64958fcfea299.png',

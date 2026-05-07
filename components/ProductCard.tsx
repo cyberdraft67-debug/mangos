@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
+import { Star, Plus, Check, MessageSquare, X } from 'lucide-react';
 import { Product, Review } from '../types';
+import { cn } from '../lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -45,229 +47,169 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
   const renderStars = (rating: number) => {
     return (
-      <div className="flex text-amber-400">
+      <div className="flex gap-0.5 text-gold">
         {[...Array(5)].map((_, i) => (
-          <svg key={i} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={i < Math.floor(rating) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-0.5">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
+          <Star 
+            key={i} 
+            size={12} 
+            fill={i < Math.floor(rating) ? 'currentColor' : 'none'} 
+            className="stroke-[1.5]"
+          />
         ))}
       </div>
     );
   };
 
   const stockStatus = product.stock <= 0 
-    ? { label: 'Out of Stock', color: 'bg-red-50 text-red-600 border-red-100' }
+    ? { label: 'Sold Out', color: 'text-red-500' }
     : product.stock <= 10 
-    ? { label: 'Limited Batch', color: 'bg-orange-50 text-orange-600 border-orange-100' }
-    : { label: 'Fresh Harvest', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' };
+    ? { label: 'Select Harvest', color: 'text-gold' }
+    : { label: 'Peak Season', color: 'text-charcoal/40' };
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ y: -8 }}
-      className="bg-white rounded-[2.5rem] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-amber-50/50 group flex flex-col h-full transition-shadow hover:shadow-[0_20px_60px_rgba(251,191,36,0.15)]"
+      className="group flex flex-col h-full perspective-1000"
     >
-      <div className="relative h-72 overflow-hidden shrink-0">
+      <div className="relative aspect-[3/4] overflow-hidden bg-ivory rounded-none mb-8 group-hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] transition-all duration-1000 border border-charcoal/5">
         <motion.img 
           src={product.image} 
           alt={product.name} 
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.6 }}
-          className={`w-full h-full object-cover ${product.stock <= 0 ? 'grayscale opacity-60' : ''}`}
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          className={cn(
+            "w-full h-full object-cover transition-all duration-700 brightness-90 group-hover:brightness-100",
+            product.stock <= 0 ? 'grayscale opacity-40' : 'group-hover:contrast-[1.05]'
+          )}
+          referrerPolicy="no-referrer"
         />
         
-        {/* Stock Status Label - Top Left */}
-        <div className={`absolute top-4 left-4 border px-4 py-1.5 rounded-full text-[10px] font-black shadow-lg uppercase tracking-widest z-10 ${stockStatus.color}`}>
-          {stockStatus.label} {product.stock > 0 && product.stock <= 10 && `(${product.stock})`}
-        </div>
-
-        {/* Category Label - Bottom Right */}
-        <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur px-4 py-1.5 rounded-full text-amber-800 text-[10px] font-black shadow-lg uppercase tracking-widest border border-amber-100 z-10">
-          {product.category}
-        </div>
-        
-        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/10 pointer-events-none"></div>
-      </div>
-      
-      <div className="p-8 flex flex-col flex-1">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-2xl font-bold text-gray-900 tracking-tight">{product.name}</h3>
-          <span className="text-2xl font-black text-amber-600">Rs. {product.price.toLocaleString()}</span>
-        </div>
-        
-        <div className="flex items-center space-x-3 mb-6">
-          {renderStars(typeof averageRating === 'string' && averageRating === 'New' ? 0 : Number(averageRating))}
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            {averageRating} ({reviews.length} Expert reviews)
+        {/* Elite Labeling */}
+        <div className="absolute top-6 left-6 flex flex-col gap-2 pointer-events-none">
+          <span className={cn(
+            "text-[8px] font-black uppercase tracking-[0.4em] px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-none inline-block border border-charcoal/5",
+            stockStatus.color
+          )}>
+            {stockStatus.label}
+          </span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.4em] px-3 py-1.5 bg-charcoal text-white rounded-none inline-block">
+            {product.category}
           </span>
         </div>
 
-        <p className="text-gray-500 text-sm mb-8 leading-relaxed line-clamp-2">{product.description}</p>
-        
-        <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{product.unit}</span>
+        {/* Floating Quick Action */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-7 focus-within:opacity-100">
           <button 
             onClick={handleAddToCartClick}
             disabled={product.stock <= 0}
-            className={`relative flex items-center justify-center space-x-3 px-8 py-3.5 rounded-2xl font-black transition-all active:scale-95 group overflow-hidden min-w-[160px] ${
-              product.stock <= 0 
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-              : isAdded 
-              ? 'bg-emerald-500 text-white shadow-[0_8px_20px_rgba(16,185,129,0.25)]'
-              : 'bg-amber-500 hover:bg-amber-600 text-white shadow-[0_8px_20px_rgba(245,158,11,0.25)]'
-            }`}
+            className="w-16 h-16 bg-charcoal text-white rounded-full flex items-center justify-center shadow-2xl transform translate-y-10 group-hover:translate-y-0 transition-all duration-700 hover:bg-gold hover:scale-110 active:scale-95"
           >
-            <AnimatePresence mode="wait">
-              {product.stock <= 0 ? (
-                <motion.span 
-                  key="out"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  Out of Stock
-                </motion.span>
-              ) : isAdded ? (
-                <motion.div 
-                  key="added"
-                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: -10 }}
-                  className="flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                  <span>Added!</span>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  key="add"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-12 transition-transform"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                  <span>Add to Cart</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            {!isAdded && product.stock > 0 && (
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            )}
+            {isAdded ? <Check className="w-6 h-6 stroke-[3]" /> : <Plus className="w-6 h-6 stroke-[3]" />}
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex flex-col flex-1 px-2">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h3 className="text-2xl font-serif text-charcoal tracking-tight group-hover:text-gold transition-colors duration-500">{product.name}</h3>
+            <div className="flex items-center gap-4 mt-3">
+              {renderStars(typeof averageRating === 'string' && averageRating === 'New' ? 0 : Number(averageRating))}
+              <span className="text-[8px] font-black text-charcoal/30 uppercase tracking-[0.3em]">
+                {averageRating} / {reviews.length} Records
+              </span>
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="text-xl font-serif text-charcoal block tracking-tighter">Rs. {product.price.toLocaleString()}</span>
+            <span className="text-[8px] text-charcoal/30 uppercase tracking-[0.4em] font-black">{product.unit}</span>
+          </div>
+        </div>
+
+        <p className="text-charcoal/60 text-[11px] mb-10 leading-relaxed font-light italic line-clamp-2 tracking-wide">
+          {product.description}
+        </p>
+        
+        <div className="mt-auto flex items-center gap-8 pt-6 border-t border-charcoal/5">
+          <button 
+            onClick={() => setShowReviews(!showReviews)}
+            className="flex items-center gap-2 text-charcoal/40 hover:text-gold transition-colors duration-500"
+          >
+            <MessageSquare size={12} />
+            <span className="text-[8px] font-black uppercase tracking-[0.4em]">Review Dossier</span>
+          </button>
+          <button 
+            onClick={() => setShowAddReview(!showAddReview)}
+            className="text-[8px] font-black text-charcoal/20 hover:text-charcoal/50 transition-colors uppercase tracking-[0.4em]"
+          >
+            Authenticate
           </button>
         </div>
 
-        <div className="mt-6 flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <button 
-              onClick={() => setShowReviews(!showReviews)}
-              className="text-amber-600 text-[10px] font-black hover:text-amber-700 transition-colors uppercase tracking-widest flex items-center gap-2"
+        <AnimatePresence>
+          {(showReviews || showAddReview) && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden bg-white/50 rounded-none mt-6 border border-charcoal/5"
             >
-              {showReviews ? 'Hide Reviews' : 'Customer Feedback'}
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${showReviews ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <button 
-              onClick={() => setShowAddReview(!showAddReview)}
-              className="text-gray-300 text-[10px] font-black hover:text-amber-600 transition-colors uppercase tracking-widest"
-            >
-              Share Experience
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {showReviews && (
-              <motion.div 
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="space-y-4 pt-4 max-h-56 overflow-y-auto pr-3 custom-scrollbar">
-                  {reviews.length === 0 ? (
-                    <p className="text-[10px] text-gray-400 italic uppercase tracking-widest text-center py-4">Be the first to share your harvest story</p>
-                  ) : (
-                    reviews.map(review => (
-                      <motion.div 
-                        key={review.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="bg-amber-50/30 p-4 rounded-3xl border border-amber-100/30"
+              <div className="p-6">
+                {showAddReview ? (
+                  <form onSubmit={handleAddReview} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <input 
+                        type="text" 
+                        placeholder="Signature"
+                        required
+                        value={newReview.userName}
+                        onChange={e => setNewReview({...newReview, userName: e.target.value})}
+                        className="w-full text-[9px] px-0 py-3 bg-transparent border-b border-charcoal/10 focus:border-gold outline-none uppercase tracking-widest text-charcoal"
+                      />
+                      <select 
+                        value={newReview.rating}
+                        onChange={e => setNewReview({...newReview, rating: Number(e.target.value)})}
+                        className="w-full text-[9px] bg-transparent border-b border-charcoal/10 outline-none text-gold font-bold uppercase tracking-widest"
                       >
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-[10px] font-black text-gray-800 uppercase tracking-widest">{review.userName}</span>
-                          <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">{review.date}</span>
-                        </div>
-                        {renderStars(review.rating)}
-                        <p className="text-xs text-gray-600 mt-2 italic leading-relaxed font-medium">"{review.comment}"</p>
-                      </motion.div>
-                    ))
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {showAddReview && (
-              <motion.form 
-                initial={{ height: 0, opacity: 0, y: -10 }}
-                animate={{ height: 'auto', opacity: 1, y: 0 }}
-                exit={{ height: 0, opacity: 0, y: -10 }}
-                onSubmit={handleAddReview} 
-                className="p-6 bg-gray-50 rounded-3xl space-y-4 border border-gray-100 shadow-inner overflow-hidden"
-              >
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">Name</label>
-                    <input 
-                      type="text" 
+                        {[5,4,3,2,1].map(r => <option key={r} value={r} className="bg-white">{r} Stars</option>)}
+                      </select>
+                    </div>
+                    <textarea 
+                      placeholder="Orchard Evaluation"
                       required
-                      value={newReview.userName}
-                      onChange={e => setNewReview({...newReview, userName: e.target.value})}
-                      className="w-full text-xs px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+                      value={newReview.comment}
+                      onChange={e => setNewReview({...newReview, comment: e.target.value})}
+                      className="w-full text-[10px] bg-transparent border-b border-charcoal/10 outline-none min-h-[80px] resize-none text-charcoal/60 italic leading-relaxed"
                     />
+                    <div className="flex justify-between items-center">
+                      <button type="submit" className="text-[9px] font-black uppercase tracking-[0.5em] text-gold hover:text-gold-light transition-colors">Submit Report</button>
+                      <button type="button" onClick={() => setShowAddReview(false)} className="text-[9px] font-black uppercase tracking-[0.5em] text-charcoal/20 hover:text-charcoal/40 transition-colors">Abort</button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-6 max-h-60 overflow-y-auto custom-scrollbar pr-4">
+                    {reviews.length === 0 ? (
+                      <p className="text-[9px] text-charcoal/20 italic text-center py-8 tracking-[0.5em] uppercase font-black">Archive Empty</p>
+                    ) : (
+                      reviews.map(review => (
+                        <div key={review.id} className="border-b border-charcoal/5 pb-6 last:border-0">
+                          <div className="flex justify-between mb-2">
+                            <span className="text-[9px] font-black uppercase tracking-[0.3em] text-charcoal/80">{review.userName}</span>
+                            <span className="text-[8px] text-charcoal/20 uppercase tracking-[0.2em] font-black">{review.date}</span>
+                          </div>
+                          {renderStars(review.rating)}
+                          <p className="text-[10px] text-charcoal/60 mt-3 italic font-light leading-relaxed">{review.comment}</p>
+                        </div>
+                      ))
+                    )}
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">Rating</label>
-                    <select 
-                      value={newReview.rating}
-                      onChange={e => setNewReview({...newReview, rating: Number(e.target.value)})}
-                      className="w-full text-xs px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
-                    >
-                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{r} Stars</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">Thoughts</label>
-                  <textarea 
-                    required
-                    value={newReview.comment}
-                    onChange={e => setNewReview({...newReview, comment: e.target.value})}
-                    className="w-full text-xs px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white min-h-[70px]"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button 
-                    type="submit"
-                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                  >
-                    Post Review
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setShowAddReview(false)}
-                    className="px-4 py-2.5 text-gray-400 hover:text-gray-600 text-[10px] font-black uppercase tracking-widest"
-                  >
-                    Close
-                  </button>
-                </div>
-              </motion.form>
-            )}
-          </AnimatePresence>
-        </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );

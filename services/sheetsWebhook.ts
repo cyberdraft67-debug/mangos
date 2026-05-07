@@ -22,7 +22,7 @@ export async function sendOrderToSheet(payload: OrderPayload) {
     ...payload,
     itemSummary: payload.items.map(i => `${i.quantity}x ${i.name}`).join(', '),
     timestamp: new Date().toISOString(),
-    source: "Chaunsa Gold Web Store"
+    source: "Heritage Reserve Web Store"
   };
 
   try {

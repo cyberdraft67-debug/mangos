@@ -1,24 +1,27 @@
 
 import * as React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 200]);
+  const scale = useTransform(scrollY, [0, 500], [1.1, 1.3]);
+  const rotate = useTransform(scrollY, [0, 500], [0, 5]);
+
   return (
     <div id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Container with Movement */}
+      {/* Background Container with Parallax and Ambient Movement */}
       <motion.div 
-        initial={{ scale: 1 }}
+        style={{ y, scale, rotateZ: rotate }}
         animate={{ 
-          scale: [1, 1.15, 1],
-          x: [0, -15, 0],
-          y: [0, -10, 0]
+          scale: [1.1, 1.2, 1.1],
+          rotate: [0, 1.5, 0]
         }}
         transition={{ 
-          duration: 30, 
-          repeat: Infinity, 
-          ease: "linear" 
+          scale: { duration: 25, repeat: Infinity, ease: "easeInOut" },
+          rotate: { duration: 35, repeat: Infinity, ease: "easeInOut" }
         }}
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 origin-center"
       >
         <video 
           autoPlay 
@@ -29,7 +32,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
           poster="https://images.unsplash.com/photo-1591073113125-e46713c829ed?q=80&w=2000&auto=format&fit=crop"
         >
           <source 
-            src="https://assets.mixkit.co/videos/preview/mixkit-man-harvesting-fresh-mangoes-from-a-tree-41132-large.mp4" 
+            src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-forest-and-a-winding-river-4395-large.mp4" 
             type="video/mp4" 
           />
         </video>
@@ -43,8 +46,14 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 text-center">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          animate={{ 
+            opacity: 1, 
+            y: [0, -10, 0],
+          }}
+          transition={{ 
+            opacity: { duration: 1, ease: "easeOut" },
+            y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+          }}
           className="max-w-4xl mx-auto"
         >
           <motion.div

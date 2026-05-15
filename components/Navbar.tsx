@@ -28,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, onScrollTo }) =>
             
             <div className="hidden md:flex space-x-8 items-center">
               <button onClick={() => onScrollTo('products')} className="text-gray-700 hover:text-amber-600 font-medium text-sm transition-colors uppercase tracking-widest">Our Selection</button>
-              <button onClick={() => onScrollTo('about')} className="text-gray-700 hover:text-amber-600 font-medium text-sm transition-colors uppercase tracking-widest">Why Chaunsa?</button>
+              <button onClick={() => onScrollTo('footer')} className="text-gray-700 hover:text-amber-600 font-medium text-sm transition-colors uppercase tracking-widest">Contact</button>
             </div>
 
             <div className="flex items-center space-x-4">

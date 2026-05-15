@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
 import CartDrawer from './components/CartDrawer';
+import Footer from './components/Footer';
 import { AdminLogin, AdminDashboard } from './components/AdminPanel';
 import { PRODUCTS } from './constants';
 import { Product, CartItem } from './types';
@@ -96,6 +97,8 @@ const App: React.FC = () => {
         onUpdateQuantity={updateQuantity}
         clearCart={clearCart}
       />
+
+      <Footer />
 
       {/* ADMIN LOGIN */}
       {showAdminLogin && (

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CartItem } from '../types';
-import { processOrderSubmission, generateGmailLink, OrderData } from '../services/orderService';
+import { processOrderSubmission, OrderData } from '../services/orderService';
 import { generateOrderPDF } from '../services/pdfService';
 
 interface CartDrawerProps {
@@ -31,11 +31,35 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
 
   const [syncError, setSyncError] = useState<string | null>(null);
 
+  // Simple CAPTCHA logic
+  const [captcha, setCaptcha] = useState({ q: '', a: 0 });
+  const [userCaptcha, setUserCaptcha] = useState('');
+  const [captchaError, setCaptchaError] = useState(false);
+
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    setCaptcha({ q: `${num1} + ${num2}`, a: num1 + num2 });
+    setUserCaptcha('');
+    setCaptchaError(false);
+  };
+
+  React.useEffect(() => {
+    if (isOpen) {
+      generateCaptcha();
+    }
+  }, [isOpen]);
+
   const handleCheckout = async () => {
     if (items.length === 0 || isProcessing) return;
     
     if (!customerInfo.name || !customerInfo.phone || !customerInfo.address) {
       setShowValidation(true);
+      return;
+    }
+
+    if (parseInt(userCaptcha) !== captcha.a) {
+      setCaptchaError(true);
       return;
     }
 
@@ -61,14 +85,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
       
       setLastOrder(orderData);
       
-      // 2. AUTOMATIC GMAIL DISPATCH
-      // This fulfills the "automatic" send requirement by opening the compose window instantly.
-      const gmailLink = generateGmailLink(orderData);
-      window.open(gmailLink, '_blank');
-
       setIsSuccess(true);
       
-      // 3. AUTOMATIC PDF GENERATION
+      // 2. AUTOMATIC PDF GENERATION
       // Delay slightly to allow the success screen to animate in
       setTimeout(() => {
         generateOrderPDF(orderData);
@@ -94,12 +113,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
         productsEl.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
-  };
-
-  const handleGmailDispatch = () => {
-    if (lastOrder) {
-      window.open(generateGmailLink(lastOrder), '_blank');
-    }
   };
 
   const handleDownloadInvoice = () => {
@@ -146,10 +159,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                     <div className="space-y-2">
                       <p className="text-xs font-bold text-gray-800 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                        Gmail Tab Dispatched
-                      </p>
-                      <p className="text-xs font-bold text-gray-800 flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
                         Invoice PDF Generated
                       </p>
                       {syncError ? (
@@ -178,13 +187,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                     Download Invoice PDF
-                  </button>
-                  <button 
-                    onClick={handleGmailDispatch}
-                    className="w-full py-5 bg-white border-2 border-[#EA4335] text-[#EA4335] hover:bg-[#EA4335] hover:text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.5 0 4 2 4 4.5V17z"/><path d="M2 9.5l10 6 10-6"/></svg>
-                    Retry Gmail Dispatch
                   </button>
                   <button 
                     onClick={handleCloseSuccess}
@@ -282,21 +284,50 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                             <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest">Delivery Details Required</p>
                           )}
                         </div>
+
+                        {/* CAPTCHA moved inside scrollable area */}
+                        <div className="mt-8 p-6 bg-amber-50 rounded-3xl border border-amber-100">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-amber-500 rounded-lg text-white">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-amber-900">Security Verification</span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1 bg-white px-4 py-3 rounded-xl border border-amber-200 text-center">
+                              <span className="text-lg font-black text-gray-900 select-none">{captcha.q} = ?</span>
+                            </div>
+                            <input 
+                              type="number"
+                              value={userCaptcha}
+                              onChange={(e) => {
+                                setUserCaptcha(e.target.value);
+                                setCaptchaError(false);
+                              }}
+                              placeholder="Ans"
+                              className={`w-24 px-4 py-3 rounded-xl bg-white border ${captchaError ? 'border-red-500 bg-red-50' : 'border-amber-200'} outline-none font-black text-center text-lg transition-all`}
+                            />
+                          </div>
+                          {captchaError && (
+                            <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest mt-3">Identity Unverified. Try again.</p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
 
                 {items.length > 0 && (
-                  <div className="p-10 border-t border-gray-100 bg-white rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.02)]">
-                    <div className="flex justify-between items-center mb-8">
+                  <div className="p-8 border-t border-gray-100 bg-white rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.02)]">
+                    <div className="flex justify-between items-center mb-4">
                       <span className="text-gray-400 font-black text-xs uppercase tracking-[0.2em]">Settlement</span>
                       <span className="text-4xl font-black text-gray-900 tracking-tighter">Rs. {total.toLocaleString()}</span>
                     </div>
+
                     <button 
                       onClick={handleCheckout}
                       disabled={isProcessing}
-                      className="w-full py-6 bg-gray-900 hover:bg-black text-white rounded-3xl font-black text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-4 disabled:bg-gray-400"
+                      className="w-full py-5 bg-gray-900 hover:bg-black text-white rounded-3xl font-black text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-4 disabled:bg-gray-400"
                     >
                       {isProcessing ? (
                         <span className="flex items-center gap-3">
@@ -310,7 +341,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                         </>
                       )}
                     </button>
-                    <p className="text-center text-[8px] text-gray-400 font-black uppercase tracking-[0.3em] mt-8">Instant Ledger Sync • Automatic PDF & Gmail Dispatch</p>
+                    <p className="text-center text-[8px] text-gray-400 font-black uppercase tracking-[0.3em] mt-4">Instant Ledger Sync • Automatic PDF Dispatch</p>
                   </div>
                 )}
               </>

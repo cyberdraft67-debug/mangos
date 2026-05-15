@@ -107,21 +107,3 @@ export function exportOrdersToCSV() {
   document.body.removeChild(link);
 }
 
-/**
- * Generates a direct link to Gmail Compose to ensure it uses the user's Google account
- */
-export function generateGmailLink(order: OrderData) {
-  const subject = encodeURIComponent(`👑 NEW CHAUNSA ORDER: ${order.orderId}`);
-  const itemsList = order.items.map(i => `• ${i.quantity}x ${i.name} (${i.unit}) - Rs. ${i.price * i.quantity}`).join('\n');
-  const body = encodeURIComponent(
-    `ORDER ID: ${order.orderId}\n` +
-    `CUSTOMER: ${order.customer.name}\n` +
-    `PHONE: ${order.customer.phone}\n` +
-    `ADDRESS: ${order.customer.address}\n\n` +
-    `ITEMS:\n${itemsList}\n\n` +
-    `TOTAL: Rs. ${order.total.toLocaleString()}`
-  );
-  
-  // This URL format specifically opens the Gmail web composer
-  return `https://mail.google.com/mail/?view=cm&fs=1&to=${ORDER_NOTIFICATION_EMAIL}&su=${subject}&body=${body}`;
-}

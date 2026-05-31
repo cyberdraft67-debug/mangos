@@ -45,7 +45,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
   }, []);
 
   return (
-    <div id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
+    <div id="hero" className="relative min-h-screen pt-36 pb-16 flex items-center justify-center overflow-hidden">
       {/* Background Container with Parallax and Ambient Movement */}
       <motion.div 
         style={{ y, scale, rotateZ: rotate }}
@@ -106,7 +106,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 1.2, ease: "easeOut" }}
-            className="text-7xl md:text-9xl font-black mb-8 leading-[0.9] text-white tracking-tighter"
+            className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.95] text-white tracking-tighter"
           >
             The Golden <br />
             <span className="text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]">Orchard</span>
@@ -116,7 +116,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="text-xl md:text-2xl mb-8 text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-lg"
+            className="text-lg md:text-xl mb-6 text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-lg"
           >
             Savor the royalty of orchards. Directly from nature's lap to your door. <br/> <span className="text-amber-400 font-bold">Serving Karachi Only.</span>
           </motion.p>
@@ -126,56 +126,56 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
-            className="mb-10 max-w-md mx-auto p-4 md:p-6 bg-black/60 backdrop-blur-md rounded-3xl border border-amber-500/20 shadow-[0_0_50px_rgba(245,158,11,0.08)]"
+            className="mb-8 max-w-sm mx-auto p-3 md:p-4 bg-black/65 backdrop-blur-md rounded-2xl border border-amber-500/20 shadow-[0_0_40px_rgba(245,158,11,0.06)]"
           >
-            <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="flex items-center justify-center gap-1.5 mb-2.5">
               <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping"></span>
-              <p className="text-amber-400 text-[9px] font-black uppercase tracking-[0.3em]">
+              <p className="text-amber-400 text-[8px] font-black uppercase tracking-[0.3em]">
                 HARVEST CYCLE CLOSING IN
               </p>
             </div>
             
-            <div className="grid grid-cols-4 gap-3">
-              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-white/15">
-                <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
+            <div className="grid grid-cols-4 gap-2">
+              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-white/10">
+                <span className="text-xl md:text-2xl font-black text-white tracking-tight">
                   {String(timeLeft.days).padStart(2, '0')}
                 </span>
-                <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Days</span>
+                <span className="text-[7px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Days</span>
               </div>
-              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-white/15">
-                <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
+              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-white/10">
+                <span className="text-xl md:text-2xl font-black text-white tracking-tight">
                   {String(timeLeft.hours).padStart(2, '0')}
                 </span>
-                <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Hours</span>
+                <span className="text-[7px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Hours</span>
               </div>
-              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-white/15">
-                <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
+              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-white/10">
+                <span className="text-xl md:text-2xl font-black text-white tracking-tight">
                   {String(timeLeft.minutes).padStart(2, '0')}
                 </span>
-                <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Mins</span>
+                <span className="text-[7px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Mins</span>
               </div>
-              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-amber-400/30">
-                <span className="text-2xl md:text-3xl font-black text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] tracking-tight">
+              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-amber-400/20">
+                <span className="text-xl md:text-2xl font-black text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.4)] tracking-tight">
                   {String(timeLeft.seconds).padStart(2, '0')}
                 </span>
-                <span className="text-[8px] font-extrabold text-amber-400 uppercase tracking-widest mt-0.5 animate-pulse">Secs</span>
+                <span className="text-[7px] font-extrabold text-amber-400 uppercase tracking-widest mt-0.5 animate-pulse">Secs</span>
               </div>
             </div>
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.8 }}
-            className="flex flex-col items-center gap-8"
+            className="flex flex-col items-center gap-6"
           >
             <button 
               onClick={onExplore}
-              className="relative px-16 py-6 bg-amber-500 hover:bg-amber-600 text-white rounded-full font-bold text-2xl transition-all transform hover:scale-105 shadow-[0_0_60px_rgba(245,158,11,0.5)] active:scale-95 group flex items-center gap-4 overflow-hidden"
+              className="relative px-12 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-full font-bold text-lg md:text-xl transition-all transform hover:scale-105 shadow-[0_0_50px_rgba(245,158,11,0.4)] active:scale-95 group flex items-center gap-3 overflow-hidden"
             >
-              <span className="relative z-10 flex items-center gap-3">
+              <span className="relative z-10 flex items-center gap-2">
                 Order Your Harvest
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-2 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1.5 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             </button>
@@ -183,11 +183,11 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             <motion.div 
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ repeat: Infinity, duration: 3 }}
-              className="flex items-center gap-3"
+              className="flex items-center gap-2.5"
             >
-              <div className="h-px w-8 bg-amber-400/50"></div>
-              <p className="text-amber-400 text-[10px] font-black uppercase tracking-[0.4em]">Scroll to Discover</p>
-              <div className="h-px w-8 bg-amber-400/50"></div>
+              <div className="h-px w-6 bg-amber-400/50"></div>
+              <p className="text-amber-400 text-[9px] font-black uppercase tracking-[0.4em]">Scroll to Discover</p>
+              <div className="h-px w-6 bg-amber-400/50"></div>
             </motion.div>
           </motion.div>
         </motion.div>

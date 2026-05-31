@@ -16,8 +16,8 @@ const Footer: React.FC = () => {
                 <span className="text-white font-black text-xl">C</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-black text-gray-900 tracking-tighter uppercase leading-none">Chaunsa</span>
-                <span className="text-xl font-light text-amber-500 tracking-tighter uppercase leading-none">Gold</span>
+                <span className="text-xl font-black text-gray-900 tracking-tighter uppercase leading-none">The Golden</span>
+                <span className="text-xl font-light text-amber-500 tracking-tighter uppercase leading-none">Orchard</span>
               </div>
             </div>
             <p className="text-gray-400 font-bold text-sm leading-relaxed max-w-sm uppercase tracking-wider">
@@ -29,10 +29,42 @@ const Footer: React.FC = () => {
           <div className="space-y-6 md:text-right flex flex-col md:items-end">
             <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Navigation</h4>
             <ul className="grid grid-cols-2 md:grid-cols-1 gap-4">
-              <li><a href="#hero" className="text-gray-900 font-bold uppercase tracking-widest text-xs hover:text-amber-500 transition-colors">Home</a></li>
-              <li><a href="#catalog" className="text-gray-900 font-bold uppercase tracking-widest text-xs hover:text-amber-500 transition-colors">The Harvest</a></li>
-              <li><a href="#" className="text-gray-900 font-bold uppercase tracking-widest text-xs hover:text-amber-500 transition-colors">Our Orchards</a></li>
-              <li><a href="#" className="text-gray-900 font-bold uppercase tracking-widest text-xs hover:text-amber-500 transition-colors">Shipping</a></li>
+              <li>
+                <motion.a 
+                  href="#hero" 
+                  whileHover={{ x: -4, color: "#f59e0b" }}
+                  className="text-gray-900 font-bold uppercase tracking-widest text-xs inline-block transition-colors"
+                >
+                  Home
+                </motion.a>
+              </li>
+              <li>
+                <motion.a 
+                  href="#catalog" 
+                  whileHover={{ x: -4, color: "#f59e0b" }}
+                  className="text-gray-900 font-bold uppercase tracking-widest text-xs inline-block transition-colors"
+                >
+                  The Harvest
+                </motion.a>
+              </li>
+              <li>
+                <motion.a 
+                  href="#" 
+                  whileHover={{ x: -4, color: "#f59e0b" }}
+                  className="text-gray-900 font-bold uppercase tracking-widest text-xs inline-block transition-colors"
+                >
+                  Our Orchards
+                </motion.a>
+              </li>
+              <li>
+                <motion.a 
+                  href="#" 
+                  whileHover={{ x: -4, color: "#f59e0b" }}
+                  className="text-gray-900 font-bold uppercase tracking-widest text-xs inline-block transition-colors"
+                >
+                  Shipping
+                </motion.a>
+              </li>
             </ul>
           </div>
         </div>
@@ -40,11 +72,23 @@ const Footer: React.FC = () => {
         {/* Bottom bar */}
         <div className="pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">
-            &copy; {currentYear} Chaunsa Gold. Multan Harvest Reserve.
+            &copy; {currentYear} The Golden Orchard. Multan Harvest Reserve.
           </p>
           <div className="flex gap-8">
-            <a href="#" className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] hover:text-gray-900 transition-colors">Privacy</a>
-            <a href="#" className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] hover:text-gray-900 transition-colors">Terms</a>
+            <motion.a 
+              href="#" 
+              whileHover={{ y: -2, color: "#111827" }}
+              className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] transition-colors"
+            >
+              Privacy
+            </motion.a>
+            <motion.a 
+              href="#" 
+              whileHover={{ y: -2, color: "#111827" }}
+              className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] transition-colors"
+            >
+              Terms
+            </motion.a>
           </div>
         </div>
       </div>

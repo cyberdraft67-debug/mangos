@@ -22,8 +22,8 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, onScrollTo }) =>
               className="flex items-center cursor-pointer"
               onClick={() => onScrollTo('hero')}
             >
-              <span className="text-2xl font-bold text-amber-600">CHAUNSA</span>
-              <span className="text-2xl font-light text-amber-400 ml-1">GOLD</span>
+              <span className="text-2xl font-bold text-amber-600">GOLDEN</span>
+              <span className="text-2xl font-light text-amber-400 ml-1">ORCHARD</span>
             </div>
             
             <div className="hidden md:flex space-x-8 items-center">

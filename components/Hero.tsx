@@ -2,11 +2,47 @@
 import * as React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
+// Premium harvest season ends on August 15th, 2026 at 23:59:59 UTC
+const TARGET_HARVEST_DATE = '2026-08-15T23:59:59Z';
+
+const calculateTimeLeft = () => {
+  const targetDate = new Date(TARGET_HARVEST_DATE);
+  const now = new Date();
+  const difference = targetDate.getTime() - now.getTime();
+  
+  let timeLeft = {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  };
+
+  if (difference > 0) {
+    timeLeft = {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60)
+    };
+  }
+  return timeLeft;
+};
+
 const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 200]);
   const scale = useTransform(scrollY, [0, 500], [1.1, 1.3]);
   const rotate = useTransform(scrollY, [0, 500], [0, 5]);
+
+  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -32,7 +68,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
           poster="https://images.unsplash.com/photo-1591073113125-e46713c829ed?q=80&w=2000&auto=format&fit=crop"
         >
           <source 
-            src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-forest-and-a-winding-river-4395-large.mp4" 
+            src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-lush-green-forest-4393-large.mp4" 
             type="video/mp4" 
           />
         </video>
@@ -73,17 +109,59 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             className="text-7xl md:text-9xl font-black mb-8 leading-[0.9] text-white tracking-tighter"
           >
             The Golden <br />
-            <span className="text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]">Chaunsa</span>
+            <span className="text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]">Orchard</span>
           </motion.h1>
           
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="text-xl md:text-2xl mb-12 text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-lg"
+            className="text-xl md:text-2xl mb-8 text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-lg"
           >
             Savor the royalty of orchards. Directly from nature's lap to your door. <br/> <span className="text-amber-400 font-bold">Serving Karachi Only.</span>
           </motion.p>
+
+          {/* Premium Harvest Sunset Countdown */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
+            className="mb-10 max-w-md mx-auto p-4 md:p-6 bg-black/60 backdrop-blur-md rounded-3xl border border-amber-500/20 shadow-[0_0_50px_rgba(245,158,11,0.08)]"
+          >
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping"></span>
+              <p className="text-amber-400 text-[9px] font-black uppercase tracking-[0.3em]">
+                HARVEST CYCLE CLOSING IN
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-4 gap-3">
+              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-white/15">
+                <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                  {String(timeLeft.days).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Days</span>
+              </div>
+              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-white/15">
+                <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                  {String(timeLeft.hours).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Hours</span>
+              </div>
+              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-white/15">
+                <span className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                  {String(timeLeft.minutes).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Mins</span>
+              </div>
+              <div className="flex flex-col items-center p-2 bg-white/5 rounded-2xl border border-amber-400/30">
+                <span className="text-2xl md:text-3xl font-black text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] tracking-tight">
+                  {String(timeLeft.seconds).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] font-extrabold text-amber-400 uppercase tracking-widest mt-0.5 animate-pulse">Secs</span>
+              </div>
+            </div>
+          </motion.div>
 
           <motion.div 
             initial={{ opacity: 0, y: 20 }}

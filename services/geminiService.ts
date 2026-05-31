@@ -14,7 +14,7 @@ export async function getMangoAssistantResponse(userMessage: string): Promise<st
       model: "gemini-3-flash-preview",
       contents: userMessage,
       config: {
-        systemInstruction: "You are the 'Chaunsa Gold Concierge', a world-class expert on Chaunsa mangoes. Provide high-end recipe suggestions, historical facts, and storage tips. Keep responses elegant, sophisticated, and helpful.",
+        systemInstruction: "You are the 'Golden Orchard Concierge', a world-class expert on Chaunsa mangoes. Provide high-end recipe suggestions, historical facts, and storage tips. Keep responses elegant, sophisticated, and helpful.",
       }
     });
 

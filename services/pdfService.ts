@@ -17,11 +17,11 @@ export async function generateOrderPDF(order: OrderData) {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(24);
   doc.setFont("helvetica", "bold");
-  doc.text("HERITAGE RESERVE", 20, 20);
+  doc.text("THE GOLDEN ORCHARD", 20, 20);
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("PREMIUM MANGO EMPORIUM", 20, 28);
+  doc.text("MULTAN HARVEST RESERVE", 20, 28);
   
   doc.setFontSize(12);
   doc.text(`INVOICE: ${order.orderId}`, pageWidth - 20, 25, { align: "right" });
@@ -74,10 +74,10 @@ export async function generateOrderPDF(order: OrderData) {
   // Footer
   doc.setFontSize(8);
   doc.setTextColor(150, 150, 150);
-  doc.text("Thank you for choosing Heritage Reserve. The heritage of Punjab awaits your palate.", pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: "center" });
+  doc.text("Thank you for choosing The Golden Orchard. The royalty of Punjab awaits your palate.", pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: "center" });
 
   // Save PDF
-  doc.save(`Heritage_Reserve_Invoice_${order.orderId}.pdf`);
+  doc.save(`Golden_Orchard_Invoice_${order.orderId}.pdf`);
 }
 
 /**
@@ -94,7 +94,7 @@ export async function generateOrdersSummaryPDF(orders: OrderData[], filterName: 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(22);
   doc.setFont("helvetica", "bold");
-  doc.text("HERITAGE RESERVE HQ", 20, 20);
+  doc.text("THE GOLDEN ORCHARD HQ", 20, 20);
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
@@ -131,5 +131,5 @@ export async function generateOrdersSummaryPDF(orders: OrderData[], filterName: 
   doc.text(`Total Records: ${orders.length}`, 20, finalY + 15);
   doc.text(`Total Revenue: Rs. ${totalRevenue.toLocaleString()}`, pageWidth - 20, finalY + 15, { align: "right" });
 
-  doc.save(`Heritage_Reserve_Database_${filterName}_${Date.now()}.pdf`);
+  doc.save(`Golden_Orchard_Database_${filterName}_${Date.now()}.pdf`);
 }

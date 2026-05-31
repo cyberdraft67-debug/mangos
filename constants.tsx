@@ -1,5 +1,7 @@
 
 import { Product } from './types';
+import mangoStandardBox from './src/assets/images/mango_standard_box_1780218711076.png';
+import mangoPremiumDuo from './src/assets/images/mango_premium_duo_1780218737218.png';
 
 export const ORDER_NOTIFICATION_EMAIL = 'cyberdraft67@gmail.com';
 
@@ -14,7 +16,7 @@ export const PRODUCTS: Product[] = [
     description: 'Freshly ripened to a beautiful golden yellow. Hand-picked and nested in newspaper lining for that signature honey-sweet aroma.',
     price: 1500,
     unit: '4.5kg - 5kg Box',
-    image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?q=80&w=1000&auto=format&fit=crop',
+    image: mangoStandardBox,
     category: 'Standard',
     stock: 24,
     reviews: [
@@ -51,7 +53,7 @@ export const PRODUCTS: Product[] = [
     description: 'The apex of our harvest. This exclusive selection features monolithic Chaunsa specimens, where each individual fruit weighs an astounding half-kilogram. These golden giants represent the peak of sugar concentration and velvety texture.',
     price: 4000,
     unit: '4.5kg - 5kg XL Premium Box',
-    image: 'https://pictures.grocerapps.com/original/grocerapp-mango-white-chaunsa-5kg-box-64958fcfea299.png',
+    image: mangoPremiumDuo,
     category: 'Premium',
     stock: 2,
     reviews: [

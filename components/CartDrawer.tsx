@@ -233,7 +233,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                       <div className="space-y-4">
                         {items.map(item => (
                           <div key={item.id} className="flex gap-4 p-4 bg-white rounded-3xl border border-gray-100 shadow-sm">
-                            <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-xl" />
+                            <img src={item.image} alt={item.name} referrerPolicy="no-referrer" className="w-16 h-16 object-cover rounded-xl" />
                             <div className="flex-1">
                               <h4 className="font-bold text-gray-900 text-xs">{item.name}</h4>
                               <p className="text-[10px] text-gray-400 font-bold">{item.quantity} × {item.unit}</p>

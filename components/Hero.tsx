@@ -30,9 +30,7 @@ const calculateTimeLeft = () => {
 
 const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 200]);
-  const scale = useTransform(scrollY, [0, 500], [1.1, 1.3]);
-  const rotate = useTransform(scrollY, [0, 500], [0, 5]);
+  const y = useTransform(scrollY, [0, 600], [0, 180]);
 
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft());
 
@@ -48,16 +46,8 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
     <div id="hero" className="relative min-h-screen pt-36 pb-16 flex items-center justify-center overflow-hidden">
       {/* Background Container with Parallax and Ambient Movement */}
       <motion.div 
-        style={{ y, scale, rotateZ: rotate }}
-        animate={{ 
-          scale: [1.1, 1.2, 1.1],
-          rotate: [0, 1.5, 0]
-        }}
-        transition={{ 
-          scale: { duration: 25, repeat: Infinity, ease: "easeInOut" },
-          rotate: { duration: 35, repeat: Infinity, ease: "easeInOut" }
-        }}
-        className="absolute inset-0 z-0 origin-center"
+        style={{ y }}
+        className="absolute inset-0 z-0 origin-center will-change-transform"
       >
         <video 
           autoPlay 
@@ -180,14 +170,30 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             </button>
             
+            {/* Elegant premium mouse-wheel indicator */}
             <motion.div 
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ repeat: Infinity, duration: 3 }}
-              className="flex items-center gap-2.5"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 }}
+              className="flex flex-col items-center gap-2"
             >
-              <div className="h-px w-6 bg-amber-400/50"></div>
-              <p className="text-amber-400 text-[9px] font-black uppercase tracking-[0.4em]">Scroll to Discover</p>
-              <div className="h-px w-6 bg-amber-400/50"></div>
+              <div className="w-5 h-8 border border-amber-400/50 rounded-full flex justify-center pt-1.5 opacity-80 backdrop-blur-sm">
+                <motion.div 
+                  animate={{ 
+                    y: [0, 8, 0],
+                    opacity: [1, 0.3, 1]
+                  }}
+                  transition={{ 
+                    repeat: Infinity, 
+                    duration: 1.8, 
+                    ease: "easeInOut" 
+                  }}
+                  className="w-1 h-2 bg-amber-400 rounded-full"
+                />
+              </div>
+              <span className="text-amber-400 text-[8px] font-black uppercase tracking-[0.4em] mt-1 drop-shadow-md">
+                Scroll to Discover
+              </span>
             </motion.div>
           </motion.div>
         </motion.div>

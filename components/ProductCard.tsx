@@ -74,6 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <motion.img 
           src={product.image} 
           alt={product.name} 
+          referrerPolicy="no-referrer"
           whileHover={{ scale: 1.1 }}
           transition={{ duration: 0.6 }}
           className={`w-full h-full object-cover ${product.stock <= 0 ? 'grayscale opacity-60' : ''}`}

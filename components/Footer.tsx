@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
+import DeliveryMap from './DeliveryMap';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -8,9 +9,9 @@ const Footer: React.FC = () => {
   return (
     <footer id="footer" className="bg-white border-t border-gray-100 pt-24 pb-12 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-24 items-start">
           {/* Brand section */}
-          <div className="space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center transform rotate-6 hover:rotate-12 transition-transform">
                 <span className="text-white font-black text-xl">C</span>
@@ -25,10 +26,15 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
+          {/* Delivery Map Corridor Section */}
+          <div className="lg:col-span-5 w-full">
+            <DeliveryMap />
+          </div>
+
           {/* Navigation links - Simplified and pushed to right on desktop */}
-          <div className="space-y-6 md:text-right flex flex-col md:items-end">
+          <div className="lg:col-span-3 space-y-6 lg:text-right flex flex-col lg:items-end">
             <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Navigation</h4>
-            <ul className="grid grid-cols-2 md:grid-cols-1 gap-4">
+            <ul className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-3">
               <li>
                 <motion.a 
                   href="#hero" 

@@ -57,10 +57,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   };
 
   const stockStatus = product.stock <= 0 
-    ? { label: 'Out of Stock', color: 'bg-red-50 text-red-600 border-red-100' }
+    ? { label: 'Fully Booked', color: 'bg-red-50 text-red-600 border-red-100' }
     : product.stock <= 10 
-    ? { label: 'Limited Batch', color: 'bg-orange-50 text-orange-600 border-orange-100' }
-    : { label: 'Fresh Harvest', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' };
+    ? { label: 'Limited Booking', color: 'bg-orange-50 text-orange-600 border-orange-100' }
+    : { label: 'Booking Open', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' };
 
   return (
     <motion.div 
@@ -75,9 +75,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           src={product.image} 
           alt={product.name} 
           referrerPolicy="no-referrer"
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: product.id === '2' ? 1.35 : 1.1 }}
           transition={{ duration: 0.6 }}
-          className={`w-full h-full object-cover ${product.stock <= 0 ? 'grayscale opacity-60' : ''}`}
+          className={`w-full h-full object-cover ${product.id === '2' ? 'scale-[1.25]' : ''} ${product.stock <= 0 ? 'grayscale opacity-60' : ''}`}
         />
         
         {/* Stock Status Label - Top Left */}
@@ -94,19 +94,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
       </div>
       
       <div className="p-8 flex flex-col flex-1">
-        <div className="flex justify-between items-start mb-2">
+        <div className="flex justify-between items-start mb-6">
           <h3 className="text-2xl font-bold text-gray-900 tracking-tight">{product.name}</h3>
           <span className="text-2xl font-black text-amber-600">Rs. {product.price.toLocaleString()}</span>
         </div>
-        
-        <div className="flex items-center space-x-3 mb-6">
-          {renderStars(typeof averageRating === 'string' && averageRating === 'New' ? 0 : Number(averageRating))}
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            {averageRating} ({reviews.length} Expert reviews)
-          </span>
-        </div>
 
-        <p className="text-gray-500 text-sm mb-8 leading-relaxed line-clamp-2">{product.description}</p>
+        <p className="text-gray-500 text-sm mb-8 leading-relaxed line-clamp-3">{product.description}</p>
         
         <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{product.unit}</span>
@@ -129,7 +122,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  Out of Stock
+                  Fully Booked
                 </motion.span>
               ) : isAdded ? (
                 <motion.div 
@@ -159,116 +152,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
               <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             )}
           </button>
-        </div>
-
-        <div className="mt-6 flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <button 
-              onClick={() => setShowReviews(!showReviews)}
-              className="text-amber-600 text-[10px] font-black hover:text-amber-700 transition-colors uppercase tracking-widest flex items-center gap-2"
-            >
-              {showReviews ? 'Hide Reviews' : 'Customer Feedback'}
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${showReviews ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <button 
-              onClick={() => setShowAddReview(!showAddReview)}
-              className="text-gray-300 text-[10px] font-black hover:text-amber-600 transition-colors uppercase tracking-widest"
-            >
-              Share Experience
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {showReviews && (
-              <motion.div 
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="space-y-4 pt-4 max-h-56 overflow-y-auto pr-3 custom-scrollbar">
-                  {reviews.length === 0 ? (
-                    <p className="text-[10px] text-gray-400 italic uppercase tracking-widest text-center py-4">Be the first to share your harvest story</p>
-                  ) : (
-                    reviews.map(review => (
-                      <motion.div 
-                        key={review.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="bg-amber-50/30 p-4 rounded-3xl border border-amber-100/30"
-                      >
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-[10px] font-black text-gray-800 uppercase tracking-widest">{review.userName}</span>
-                          <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">{review.date}</span>
-                        </div>
-                        {renderStars(review.rating)}
-                        <p className="text-xs text-gray-600 mt-2 italic leading-relaxed font-medium">"{review.comment}"</p>
-                      </motion.div>
-                    ))
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {showAddReview && (
-              <motion.form 
-                initial={{ height: 0, opacity: 0, y: -10 }}
-                animate={{ height: 'auto', opacity: 1, y: 0 }}
-                exit={{ height: 0, opacity: 0, y: -10 }}
-                onSubmit={handleAddReview} 
-                className="p-6 bg-gray-50 rounded-3xl space-y-4 border border-gray-100 shadow-inner overflow-hidden"
-              >
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">Name</label>
-                    <input 
-                      type="text" 
-                      required
-                      value={newReview.userName}
-                      onChange={e => setNewReview({...newReview, userName: e.target.value})}
-                      className="w-full text-xs px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">Rating</label>
-                    <select 
-                      value={newReview.rating}
-                      onChange={e => setNewReview({...newReview, rating: Number(e.target.value)})}
-                      className="w-full text-xs px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
-                    >
-                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{r} Stars</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">Thoughts</label>
-                  <textarea 
-                    required
-                    value={newReview.comment}
-                    onChange={e => setNewReview({...newReview, comment: e.target.value})}
-                    className="w-full text-xs px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white min-h-[70px]"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button 
-                    type="submit"
-                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                  >
-                    Post Review
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setShowAddReview(false)}
-                    className="px-4 py-2.5 text-gray-400 hover:text-gray-600 text-[10px] font-black uppercase tracking-widest"
-                  >
-                    Close
-                  </button>
-                </div>
-              </motion.form>
-            )}
-          </AnimatePresence>
         </div>
       </div>
     </motion.div>

@@ -44,6 +44,12 @@ export async function generateOrderPDF(order: OrderData) {
   doc.setFont("helvetica", "normal");
   doc.text(new Date(order.timestamp).toLocaleDateString(), pageWidth - 70, 62);
 
+  doc.setFont("helvetica", "bold");
+  doc.text("CARBIDE:", pageWidth - 70, 71);
+  doc.setFont("helvetica", "normal");
+  const carbideStatus = order.customer.carbide === 'Yes' ? 'Yes (Artificial Ripening)' : 'No (Naturally Ripened)';
+  doc.text(carbideStatus, pageWidth - 70, 77);
+
   // Items Table
   const tableData = order.items.map(item => [
     item.name,

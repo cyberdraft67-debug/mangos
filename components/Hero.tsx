@@ -2,8 +2,8 @@
 import * as React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// Premium harvest season ends on August 15th, 2026 at 23:59:59 UTC
-const TARGET_HARVEST_DATE = '2026-08-15T23:59:59Z';
+// Premium pre-order delivery begins on June 15th, 2026 at 00:00:00 UTC
+const TARGET_HARVEST_DATE = '2026-06-15T00:00:00Z';
 
 const calculateTimeLeft = () => {
   const targetDate = new Date(TARGET_HARVEST_DATE);
@@ -33,6 +33,7 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
   const y = useTransform(scrollY, [0, 600], [0, 180]);
 
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft());
+  const isTimeEnded = timeLeft.days <= 0 && timeLeft.hours <= 0 && timeLeft.minutes <= 0 && timeLeft.seconds <= 0;
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -86,10 +87,10 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mb-6 inline-flex items-center gap-3 px-6 py-2 bg-amber-500/20 backdrop-blur border border-amber-400/30 rounded-full"
+            className="mb-6 inline-flex items-center gap-3 px-6 py-2 bg-amber-500/30 backdrop-blur border border-amber-400/50 rounded-full shadow-[0_4px_20px_rgba(245,158,11,0.15)]"
           >
-            <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
-            <span className="text-amber-400 text-[10px] font-black uppercase tracking-[0.4em]">Karachi Regional Exclusive</span>
+            <span className="w-2.5 h-2.5 bg-amber-400 rounded-full animate-pulse"></span>
+            <span className="text-amber-400 text-xs font-black uppercase tracking-[0.2em]">Pre-Order Chaunsa Mangoes Now! 🥭</span>
           </motion.div>
 
           <motion.h1 
@@ -106,50 +107,27 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="text-lg md:text-xl mb-6 text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-lg"
+            className="text-lg md:text-xl lg:text-2xl mb-8 text-amber-50 font-medium leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
           >
-            Savor the royalty of orchards. Directly from nature's lap to your door. <br/> <span className="text-amber-400 font-bold">Serving Karachi Only.</span>
+            Savor the legendary sweetness of premium, organic Chaunsa mangoes.
+            <br />
+            Secure your pre-order in advance to reserve your premium selection and avoid missing out.
           </motion.p>
 
-          {/* Premium Harvest Sunset Countdown */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
-            className="mb-8 max-w-sm mx-auto p-3 md:p-4 bg-black/65 backdrop-blur-md rounded-2xl border border-amber-500/20 shadow-[0_0_40px_rgba(245,158,11,0.06)]"
+          {/* Attractive Quick Badges */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-10 text-xs md:text-sm"
           >
-            <div className="flex items-center justify-center gap-1.5 mb-2.5">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping"></span>
-              <p className="text-amber-400 text-[8px] font-black uppercase tracking-[0.3em]">
-                HARVEST CYCLE CLOSING IN
-              </p>
+            <div className="flex items-center gap-2 text-amber-400 font-bold bg-black/60 px-5 py-2.5 rounded-full border border-amber-400/20 shadow-xl backdrop-blur-md">
+              <span className="text-base">📅</span>
+              <span>Pre-order Shipments Begin: <strong className="font-black text-white ml-0.5">After 15 June 2026</strong></span>
             </div>
-            
-            <div className="grid grid-cols-4 gap-2">
-              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-white/10">
-                <span className="text-xl md:text-2xl font-black text-white tracking-tight">
-                  {String(timeLeft.days).padStart(2, '0')}
-                </span>
-                <span className="text-[7px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Days</span>
-              </div>
-              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-white/10">
-                <span className="text-xl md:text-2xl font-black text-white tracking-tight">
-                  {String(timeLeft.hours).padStart(2, '0')}
-                </span>
-                <span className="text-[7px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Hours</span>
-              </div>
-              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-white/10">
-                <span className="text-xl md:text-2xl font-black text-white tracking-tight">
-                  {String(timeLeft.minutes).padStart(2, '0')}
-                </span>
-                <span className="text-[7px] font-extrabold text-gray-400 uppercase tracking-widest mt-0.5">Mins</span>
-              </div>
-              <div className="flex flex-col items-center p-1.5 bg-white/5 rounded-xl border border-amber-400/20">
-                <span className="text-xl md:text-2xl font-black text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.4)] tracking-tight">
-                  {String(timeLeft.seconds).padStart(2, '0')}
-                </span>
-                <span className="text-[7px] font-extrabold text-amber-400 uppercase tracking-widest mt-0.5 animate-pulse">Secs</span>
-              </div>
+            <div className="flex items-center gap-2.5 text-gray-200 font-bold bg-black/60 px-5 py-2.5 rounded-full border border-white/10 shadow-xl backdrop-blur-md">
+              <span className="w-2 h-2 rounded-full bg-emerald-450 animate-pulse"></span>
+              <span>Serving Karachi Exclusively</span>
             </div>
           </motion.div>
 

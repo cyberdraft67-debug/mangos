@@ -59,7 +59,35 @@ const App: React.FC = () => {
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (!el) return;
+
+    // Premium custom-easing smooth scroll with a refined top offset (ideal for fixed navigations)
+    const headerOffset = 130;
+    const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+    const offsetPosition = elementPosition - headerOffset;
+
+    const startPosition = window.scrollY;
+    const distance = offsetPosition - startPosition;
+    const duration = 1000; // Refined 1-second long-range easing
+    let startTimestamp: number | null = null;
+
+    const cubicOut = (t: number) => {
+      return 1 - Math.pow(1 - t, 3); // Slowing down beautifully at the end
+    };
+
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const easedProgress = cubicOut(progress);
+      
+      window.scrollTo(0, startPosition + distance * easedProgress);
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+
+    window.requestAnimationFrame(step);
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -77,6 +105,15 @@ const App: React.FC = () => {
       {/* PRODUCTS */}
       <section id="products" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tight">
+              Our 2026 Selections
+            </h2>
+            <p className="text-gray-500 text-sm max-w-2xl mx-auto font-medium leading-relaxed">
+              Straight from the sun-drenched orchards of Punjab. Our handpicked premium boxes are tailored for regular family enjoyment, gifting, or premium celebrations:
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {PRODUCTS.map(product => (
               <ProductCard

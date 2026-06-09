@@ -14,7 +14,7 @@ export interface Product {
   price: number;
   unit: string;
   image: string;
-  category: 'Standard' | 'Premium' | 'Bulk';
+  category: 'Regular' | 'Premium' | 'Mini' | 'Bulk' | 'Standard';
   reviews: Review[];
   stock: number;
 }

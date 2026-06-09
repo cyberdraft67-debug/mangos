@@ -9,6 +9,7 @@ export interface OrderData {
     phone: string;
     address: string;
     notes?: string;
+    carbide?: string;
   };
   items: CartItem[];
   total: number;
@@ -27,11 +28,27 @@ export async function processOrderSubmission(order: OrderData) {
   localStorage.setItem('chaunsa_orders', JSON.stringify([order, ...existingOrders]));
 
   const payload = {
-    ...order,
+    orderId: order.orderId,
+    customerName: order.customer.name,
+    customerPhone: order.customer.phone,
+    customerAddress: order.customer.address,
+    customerNotes: order.customer.notes || '',
+    carbide: order.customer.carbide || 'No',
     itemSummary: order.items.map(i => `${i.quantity}x ${i.name} (${i.unit})`).join(', '),
+    total: order.total,
+    timestamp: order.timestamp,
+    date: new Date(order.timestamp).toLocaleString(),
+    status: order.status,
     action: "NEW_ORDER",
     recipient: ORDER_NOTIFICATION_EMAIL,
-    source: "Heritage Reserve Web Store"
+    source: "Heritage Reserve Web Store",
+    customer: {
+      name: order.customer.name,
+      phone: order.customer.phone,
+      address: order.customer.address,
+      notes: order.customer.notes || '',
+      carbide: order.customer.carbide || 'No'
+    }
   };
 
   try {

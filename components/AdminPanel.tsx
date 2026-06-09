@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getAllOrders, updateOrderStatus, OrderData, clearAllOrders } from '../services/orderService';
+import { getAllOrders, updateOrderStatus, OrderData, clearAllOrders, processOrderSubmission } from '../services/orderService';
 import { generateOrderPDF, generateOrdersSummaryPDF } from '../services/pdfService';
 
 export const AdminLogin: React.FC<{ onLogin: () => void; onCancel: () => void }> = ({ onLogin, onCancel }) => {
@@ -99,6 +99,76 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
     ? orders 
     : orders.filter(order => order.status === filter);
 
+  const [isTestSending, setIsTestSending] = useState(false);
+
+  const handleTestWebhook = async () => {
+    setIsTestSending(true);
+    const testOrder: OrderData = {
+      orderId: `TEST-${Date.now().toString().slice(-4)}`,
+      customer: {
+        name: "Test Customer (Make.com Detection)",
+        phone: "+92 300 1234567",
+        address: "123 Test Street, Model Town, Karachi",
+        notes: "This is a configuration payload sent to test Google Sheets integration.",
+        carbide: "No"
+      },
+      items: [
+        {
+          id: "3",
+          name: "Premium Box",
+          price: 2000,
+          quantity: 2,
+          unit: "4.5 - 5 KG Box",
+          image: "",
+          category: "Premium"
+        }
+      ],
+      total: 4000,
+      timestamp: new Date().toISOString(),
+      status: "Pending"
+    };
+
+    try {
+      // Bypass saving this TEST order to local ledger so we don't pollute local list
+      const response = await fetch('https://hook.eu1.make.com/zdad5cs86ehxvko0q7vqihtatp5w5cf9', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: testOrder.orderId,
+          customerName: testOrder.customer.name,
+          customerPhone: testOrder.customer.phone,
+          customerAddress: testOrder.customer.address,
+          customerNotes: testOrder.customer.notes || '',
+          carbide: testOrder.customer.carbide || 'No',
+          itemSummary: testOrder.items.map(i => `${i.quantity}x ${i.name} (${i.unit})`).join(', '),
+          total: testOrder.total,
+          timestamp: testOrder.timestamp,
+          date: new Date(testOrder.timestamp).toLocaleString(),
+          status: testOrder.status,
+          action: "NEW_ORDER",
+          source: "Heritage Reserve Web Store",
+          customer: {
+            name: testOrder.customer.name,
+            phone: testOrder.customer.phone,
+            address: testOrder.customer.address,
+            notes: testOrder.customer.notes || '',
+            carbide: testOrder.customer.carbide || 'No'
+          }
+        }),
+      });
+      
+      if (response.ok) {
+        alert("SUCCESS: Test Order successfully dispatched to Make.com! Please check your Google Sheet mapping.");
+      } else {
+        alert(`Webhook responded with status ${response.status}`);
+      }
+    } catch (e) {
+      alert("Error sending test payload to your webhook. Check connection.");
+    } finally {
+      setIsTestSending(false);
+    }
+  };
+
   const handleDownloadLedgerPDF = () => {
     if (filteredOrders.length === 0) {
       alert("No records to download.");
@@ -122,6 +192,14 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
         </div>
         
         <div className="flex items-center gap-3">
+          <button 
+            type="button"
+            disabled={isTestSending}
+            onClick={handleTestWebhook}
+            className="flex items-center gap-2 bg-amber-500 text-white px-5 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-amber-600 transition-all shadow-sm disabled:opacity-50"
+          >
+            {isTestSending ? 'Sending...' : 'Test Webhook'}
+          </button>
           <button 
             onClick={handleDownloadLedgerPDF} 
             className="flex items-center gap-2 bg-white border border-gray-200 px-5 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-amber-50 hover:border-amber-200 transition-all text-gray-600 shadow-sm"
@@ -256,9 +334,18 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
                         <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Phone / WhatsApp</p>
                         <p className="font-black text-gray-900 text-lg">{selectedOrder.customer.phone}</p>
                       </div>
-                      <div>
+                      <div className="pb-4 border-b border-gray-50">
                         <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Destination Address</p>
                         <p className="font-bold text-gray-700 leading-relaxed text-sm">{selectedOrder.customer.address}</p>
+                      </div>
+                      <div className="flex items-center justify-between pt-2">
+                        <div>
+                          <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-1">Carbide Option Selected</p>
+                          <p className="font-black text-gray-900 text-base">
+                            {selectedOrder.customer.carbide === 'Yes' ? 'Yes (Calcium Carbide Ripening)' : 'No (Naturally Ripened - Organic)'}
+                          </p>
+                        </div>
+                        <span className={`w-4 h-4 rounded-full ${selectedOrder.customer.carbide === 'Yes' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`}></span>
                       </div>
                     </div>
                   </div>

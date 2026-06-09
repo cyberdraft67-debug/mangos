@@ -20,7 +20,8 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
     name: '',
     phone: '',
     address: '',
-    notes: '' 
+    notes: '',
+    carbide: 'No' 
   });
   const [showValidation, setShowValidation] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -35,6 +36,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
   const [captcha, setCaptcha] = useState({ q: '', a: 0 });
   const [userCaptcha, setUserCaptcha] = useState('');
   const [captchaError, setCaptchaError] = useState(false);
+  const [captchaErrorType, setCaptchaErrorType] = useState<'empty' | 'incorrect' | 'none'>('none');
 
   const generateCaptcha = () => {
     const num1 = Math.floor(Math.random() * 10) + 1;
@@ -42,6 +44,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
     setCaptcha({ q: `${num1} + ${num2}`, a: num1 + num2 });
     setUserCaptcha('');
     setCaptchaError(false);
+    setCaptchaErrorType('none');
   };
 
   React.useEffect(() => {
@@ -55,11 +58,44 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
     
     if (!customerInfo.name || !customerInfo.phone || !customerInfo.address) {
       setShowValidation(true);
+      setTimeout(() => {
+        const idToScroll = !customerInfo.name 
+          ? 'recipient-name' 
+          : (!customerInfo.phone ? 'recipient-phone' : 'recipient-address');
+        const element = document.getElementById(idToScroll);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+        }
+      }, 50);
+      return;
+    }
+
+    if (!userCaptcha || !userCaptcha.trim()) {
+      setCaptchaError(true);
+      setCaptchaErrorType('empty');
+      setTimeout(() => {
+        const captchaEl = document.getElementById('captcha-section');
+        if (captchaEl) {
+          captchaEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const inp = captchaEl.querySelector('input');
+          if (inp) inp.focus();
+        }
+      }, 50);
       return;
     }
 
     if (parseInt(userCaptcha) !== captcha.a) {
       setCaptchaError(true);
+      setCaptchaErrorType('incorrect');
+      setTimeout(() => {
+        const captchaEl = document.getElementById('captcha-section');
+        if (captchaEl) {
+          captchaEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const inp = captchaEl.querySelector('input');
+          if (inp) inp.focus();
+        }
+      }, 50);
       return;
     }
 
@@ -256,37 +292,83 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
 
                       <div className="bg-white p-8 rounded-[2.5rem] border border-amber-100 shadow-sm space-y-6">
                         <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs">Shipping Particulars</h3>
+                        
+                        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-3">
+                          <span className="text-lg">📅</span>
+                          <div>
+                            <p className="text-[10px] font-black text-amber-800 uppercase tracking-wider leading-none mb-1">Expected Pre-Order Delivery</p>
+                            <p className="text-[11px] font-bold text-amber-700 leading-relaxed">Bookings are dispatched after 15 June 2026. Thank you for securing your seasonal box in advance!</p>
+                          </div>
+                        </div>
+
                         <div className="space-y-4">
                           <input 
                             type="text" 
                             disabled={isProcessing}
+                            id="recipient-name"
                             value={customerInfo.name}
                             onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
                             placeholder="Recipient Full Name"
-                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.name ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
+                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.name ? 'border-red-500 bg-red-50/20' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
                           />
                           <input 
                             type="tel" 
                             disabled={isProcessing}
+                            id="recipient-phone"
                             value={customerInfo.phone}
                             onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
                             placeholder="Contact Number (Karachi)"
-                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.phone ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
+                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.phone ? 'border-red-500 bg-red-50/20' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
                           />
                           <textarea 
                             disabled={isProcessing}
+                            id="recipient-address"
                             value={customerInfo.address}
                             onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
                             placeholder="Exact Delivery Location in Karachi"
-                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.address ? 'border-red-500' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm min-h-[100px] disabled:opacity-50 transition-all`}
+                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.address ? 'border-red-500 bg-red-50/20' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm min-h-[100px] disabled:opacity-50 transition-all`}
                           />
+
+                          {/* Carbide Option Selector */}
+                          <div className="pt-6 border-t border-gray-100 flex items-center justify-between gap-4">
+                            <span className="text-xs font-black text-gray-900 uppercase tracking-widest flex items-center gap-1.5">
+                              🌿 Carbide
+                            </span>
+                            <div className="flex bg-gray-100 p-0.5 rounded-xl shrink-0 border border-gray-200/50">
+                              <button
+                                type="button"
+                                disabled={isProcessing}
+                                onClick={() => setCustomerInfo({...customerInfo, carbide: 'Yes'})}
+                                className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-200 ${
+                                  customerInfo.carbide === 'Yes' 
+                                    ? 'bg-amber-500 text-white shadow-sm' 
+                                    : 'text-gray-400 hover:text-gray-700'
+                                }`}
+                              >
+                                Yes
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isProcessing}
+                                onClick={() => setCustomerInfo({...customerInfo, carbide: 'No'})}
+                                className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-200 ${
+                                  customerInfo.carbide === 'No' 
+                                    ? 'bg-emerald-600 text-white shadow-sm' 
+                                    : 'text-gray-400 hover:text-gray-700'
+                                }`}
+                              >
+                                No
+                              </button>
+                            </div>
+                          </div>
+
                           {showValidation && (!customerInfo.name || !customerInfo.phone || !customerInfo.address) && (
                             <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest">Delivery Details Required</p>
                           )}
                         </div>
 
                         {/* CAPTCHA moved inside scrollable area */}
-                        <div className="mt-8 p-6 bg-amber-50 rounded-3xl border border-amber-100">
+                        <div id="captcha-section" className={`mt-8 p-6 rounded-3xl border transition-all duration-300 ${captchaError ? 'border-red-500 bg-red-50/70 shadow-lg ring-4 ring-red-500/10 animate-pulse' : 'bg-amber-50 border-amber-100'}`}>
                           <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-amber-500 rounded-lg text-white">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
@@ -303,13 +385,16 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                               onChange={(e) => {
                                 setUserCaptcha(e.target.value);
                                 setCaptchaError(false);
+                                setCaptchaErrorType('none');
                               }}
                               placeholder="Ans"
                               className={`w-24 px-4 py-3 rounded-xl bg-white border ${captchaError ? 'border-red-500 bg-red-50' : 'border-amber-200'} outline-none font-black text-center text-lg transition-all`}
                             />
                           </div>
                           {captchaError && (
-                            <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest mt-3">Identity Unverified. Try again.</p>
+                            <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest mt-3">
+                              {captchaErrorType === 'empty' ? 'Please solve the math challenge to proceed!' : 'Incorrect answer. Please try again!'}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -319,6 +404,46 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
 
                 {items.length > 0 && (
                   <div className="p-8 border-t border-gray-100 bg-white rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.02)]">
+                    {/* Visual Helper Warnings when validations are missed */}
+                    {showValidation && (!customerInfo.name || !customerInfo.phone || !customerInfo.address) && (
+                      <div 
+                        onClick={() => {
+                          const idToScroll = !customerInfo.name ? 'recipient-name' : (!customerInfo.phone ? 'recipient-phone' : 'recipient-address');
+                          document.getElementById(idToScroll)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          document.getElementById(idToScroll)?.focus();
+                        }}
+                        className="mb-4 bg-red-50 border border-red-100 p-4 rounded-2xl flex items-center gap-3 text-red-600 cursor-pointer hover:bg-red-100/50 transition-all shadow-sm animate-pulse"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        <div className="flex-1 text-left">
+                          <p className="text-[10px] font-black uppercase tracking-widest">Delivery Details Missing</p>
+                          <p className="text-[9px] font-bold text-red-700">Missing fields found. Click to scroll and fill.</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {captchaError && (
+                      <div 
+                        onClick={() => {
+                          document.getElementById('captcha-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          document.getElementById('captcha-section')?.querySelector('input')?.focus();
+                        }}
+                        className="mb-4 bg-red-50 border border-red-200 p-4 rounded-2xl flex items-center gap-3 text-red-600 cursor-pointer hover:bg-red-100/50 transition-all shadow-sm animate-pulse"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        <div className="flex-1 text-left">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-rose-600">
+                            {captchaErrorType === 'empty' ? 'CAPTCHA Verification Required' : 'Incorrect CAPTCHA Answer'}
+                          </p>
+                          <p className="text-[9px] font-bold text-red-700">
+                            {captchaErrorType === 'empty' 
+                              ? 'Please solve the math verification problem above to checkout. Click to scroll and answer.' 
+                              : `The answer (${userCaptcha}) is incorrect. Please solve the question ${captcha.q} again.`}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-gray-400 font-black text-xs uppercase tracking-[0.2em]">Settlement</span>
                       <span className="text-4xl font-black text-gray-900 tracking-tighter">Rs. {total.toLocaleString()}</span>

@@ -325,7 +325,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                             id="recipient-address"
                             value={customerInfo.address}
                             onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
-                            placeholder="Exact Delivery Location in Karachi"
+                            placeholder="Exact Delivery Address (House #, Street, Block/Sector, Area, Landmark)"
                             className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.address ? 'border-red-500 bg-red-50/20' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm min-h-[100px] disabled:opacity-50 transition-all`}
                           />
 

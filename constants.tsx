@@ -16,10 +16,10 @@ export const SPREADSHEET_WEBHOOK_URL = 'https://hook.eu1.make.com/zdad5cs86ehxvk
 export const PRODUCTS: Product[] = [
   {
     id: '2',
-    name: 'Regular Petti',
-    description: 'Hand-selected extra-large grade specimens representing the peak of sugar concentration and velvety texture. Unmatched honey-sweet flavor handpicked in premium petti packaging.',
+    name: 'Regular Paiti',
+    description: 'Hand-selected extra-large grade specimens representing the peak of sugar concentration and velvety texture. Unmatched honey-sweet flavor handpicked in premium paiti packaging.',
     price: 3000,
-    unit: '9-10 KG Patti',
+    unit: '9-10 KG Paiti',
     image: mangoSovereignWoodBox,
     category: 'Regular',
     stock: 35,

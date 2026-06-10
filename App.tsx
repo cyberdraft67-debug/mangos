@@ -112,6 +112,10 @@ const App: React.FC = () => {
             <p className="text-gray-500 text-sm max-w-2xl mx-auto font-medium leading-relaxed">
               Straight from the sun-drenched orchards of Punjab. Our handpicked premium boxes are tailored for regular family enjoyment, gifting, or premium celebrations:
             </p>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-amber-50 border border-amber-100 text-amber-800 font-bold text-xs uppercase tracking-wider mx-auto">
+              <span className="text-base">📅</span>
+              <span>Pre-order Shipments Begin: <strong className="font-extrabold text-amber-950">After 15 June 2026</strong></span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

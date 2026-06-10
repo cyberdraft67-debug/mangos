@@ -121,9 +121,9 @@ const Hero: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
             transition={{ delay: 0.7 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-10 text-xs md:text-sm"
           >
-            <div className="flex items-center gap-2 text-amber-400 font-bold bg-black/60 px-5 py-2.5 rounded-full border border-amber-400/20 shadow-xl backdrop-blur-md">
+            <div className="flex items-center gap-2 text-amber-400 font-bold bg-black/60 px-5 py-2.5 rounded-full border border-amber-400/20 shadow-xl backdrop-blur-md uppercase tracking-wider">
               <span className="text-base">📅</span>
-              <span>Pre-order Shipments Begin: <strong className="font-black text-white ml-0.5">After 15 June 2026</strong></span>
+              <span>Pre-order Now</span>
             </div>
             <div className="flex items-center gap-2.5 text-gray-200 font-bold bg-black/60 px-5 py-2.5 rounded-full border border-white/10 shadow-xl backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-emerald-450 animate-pulse"></span>

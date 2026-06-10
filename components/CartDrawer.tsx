@@ -21,7 +21,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
     phone: '',
     address: '',
     notes: '',
-    carbide: 'No' 
+    carbide: 'Yes' 
   });
   const [showValidation, setShowValidation] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -327,6 +327,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                             onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
                             placeholder="Exact Delivery Address (House #, Street, Block/Sector, Area, Landmark)"
                             className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.address ? 'border-red-500 bg-red-50/20' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm min-h-[100px] disabled:opacity-50 transition-all`}
+                          />
+                          <textarea 
+                            disabled={isProcessing}
+                            id="customer-notes"
+                            value={customerInfo.notes}
+                            onChange={(e) => setCustomerInfo({...customerInfo, notes: e.target.value})}
+                            placeholder="Customer Notes / Special Instructions (Optional)"
+                            className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none font-bold text-gray-900 text-sm min-h-[80px] disabled:opacity-50 transition-all"
                           />
 
                           {/* Carbide Option Selector */}

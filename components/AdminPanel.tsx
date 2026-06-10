@@ -110,7 +110,7 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
         phone: "+92 300 1234567",
         address: "123 Test Street, Model Town, Karachi",
         notes: "This is a configuration payload sent to test Google Sheets integration.",
-        carbide: "No"
+        carbide: "Yes"
       },
       items: [
         {
@@ -139,7 +139,7 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
           customerPhone: testOrder.customer.phone,
           customerAddress: testOrder.customer.address,
           customerNotes: testOrder.customer.notes || '',
-          carbide: testOrder.customer.carbide || 'No',
+          carbide: testOrder.customer.carbide || 'Yes',
           itemSummary: testOrder.items.map(i => `${i.quantity}x ${i.name} (${i.unit})`).join(', '),
           total: testOrder.total,
           timestamp: testOrder.timestamp,
@@ -152,7 +152,7 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
             phone: testOrder.customer.phone,
             address: testOrder.customer.address,
             notes: testOrder.customer.notes || '',
-            carbide: testOrder.customer.carbide || 'No'
+            carbide: testOrder.customer.carbide || 'Yes'
           }
         }),
       });

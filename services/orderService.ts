@@ -33,7 +33,7 @@ export async function processOrderSubmission(order: OrderData) {
     customerPhone: order.customer.phone,
     customerAddress: order.customer.address,
     customerNotes: order.customer.notes || '',
-    carbide: order.customer.carbide || 'No',
+    carbide: order.customer.carbide || 'Yes',
     itemSummary: order.items.map(i => `${i.quantity}x ${i.name} (${i.unit})`).join(', '),
     total: order.total,
     timestamp: order.timestamp,
@@ -47,7 +47,7 @@ export async function processOrderSubmission(order: OrderData) {
       phone: order.customer.phone,
       address: order.customer.address,
       notes: order.customer.notes || '',
-      carbide: order.customer.carbide || 'No'
+      carbide: order.customer.carbide || 'Yes'
     }
   };
 

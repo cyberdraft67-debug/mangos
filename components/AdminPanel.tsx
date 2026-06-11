@@ -141,6 +141,7 @@ export const AdminDashboard: React.FC<{ onClose: () => void }> = ({ onClose }) =
           customerNotes: testOrder.customer.notes || '',
           carbide: testOrder.customer.carbide || 'Yes',
           itemSummary: testOrder.items.map(i => `${i.quantity}x ${i.name} (${i.unit})`).join(', '),
+          quantity: testOrder.items.reduce((sum, item) => sum + item.quantity, 0),
           total: testOrder.total,
           timestamp: testOrder.timestamp,
           date: new Date(testOrder.timestamp).toLocaleString(),

@@ -35,6 +35,7 @@ export async function processOrderSubmission(order: OrderData) {
     customerNotes: order.customer.notes || '',
     carbide: order.customer.carbide || 'Yes',
     itemSummary: order.items.map(i => `${i.quantity}x ${i.name} (${i.unit})`).join(', '),
+    quantity: order.items.reduce((sum, item) => sum + item.quantity, 0),
     total: order.total,
     timestamp: order.timestamp,
     date: new Date(order.timestamp).toLocaleString(),

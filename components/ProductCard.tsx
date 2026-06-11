@@ -102,7 +102,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <p className="text-gray-500 text-sm mb-8 leading-relaxed line-clamp-3">{product.description}</p>
         
         <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{product.unit}</span>
+          <span className="text-[11px] font-black text-gray-900 bg-gray-100/80 border border-gray-200/50 px-3 py-1.5 rounded-xl uppercase tracking-wider">
+            {product.unit}
+          </span>
           <button 
             onClick={handleAddToCartClick}
             disabled={product.stock <= 0}

@@ -56,12 +56,15 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
   const handleCheckout = async () => {
     if (items.length === 0 || isProcessing) return;
     
-    if (!customerInfo.name || !customerInfo.phone || !customerInfo.address) {
+    const cleanPhone = customerInfo.phone.replace(/\D/g, '');
+    const isPhoneValid = cleanPhone.length === 11;
+
+    if (!customerInfo.name || !customerInfo.phone || !customerInfo.address || !isPhoneValid) {
       setShowValidation(true);
       setTimeout(() => {
         const idToScroll = !customerInfo.name 
           ? 'recipient-name' 
-          : (!customerInfo.phone ? 'recipient-phone' : 'recipient-address');
+          : (!customerInfo.phone || !isPhoneValid ? 'recipient-phone' : 'recipient-address');
         const element = document.getElementById(idToScroll);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -297,7 +300,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                           <span className="text-lg">📅</span>
                           <div>
                             <p className="text-[10px] font-black text-amber-800 uppercase tracking-wider leading-none mb-1">Expected Pre-Order Delivery</p>
-                            <p className="text-[11px] font-bold text-amber-700 leading-relaxed">Bookings are dispatched after 15 June 2026. Thank you for securing your seasonal box in advance!</p>
+                            <p className="text-[11px] font-bold text-amber-700 leading-relaxed">Bookings are dispatched after 20 June 2026. Thank you for securing your seasonal box in advance!</p>
                           </div>
                         </div>
 
@@ -316,9 +319,12 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                             disabled={isProcessing}
                             id="recipient-phone"
                             value={customerInfo.phone}
-                            onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
-                            placeholder="Contact Number (Karachi)"
-                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && !customerInfo.phone ? 'border-red-500 bg-red-50/20' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
+                            onChange={(e) => {
+                              const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 11);
+                              setCustomerInfo({...customerInfo, phone: digitsOnly});
+                            }}
+                            placeholder="Contact Number (11 Digits, e.g., 03001234567)"
+                            className={`w-full px-6 py-4 rounded-2xl bg-gray-50 border ${showValidation && (!customerInfo.phone || customerInfo.phone.replace(/\D/g, '').length !== 11) ? 'border-red-500 bg-red-50/20' : 'border-gray-100'} outline-none font-bold text-gray-900 text-sm disabled:opacity-50 transition-all`}
                           />
                           <textarea 
                             disabled={isProcessing}
@@ -373,6 +379,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                           {showValidation && (!customerInfo.name || !customerInfo.phone || !customerInfo.address) && (
                             <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest">Delivery Details Required</p>
                           )}
+                          {showValidation && customerInfo.phone && customerInfo.phone.replace(/\D/g, '').length !== 11 && (
+                            <p className="text-red-500 text-[9px] font-black uppercase text-center tracking-widest">Phone number must be exactly 11 digits (e.g., 03001234567)</p>
+                          )}
                         </div>
 
                         {/* CAPTCHA moved inside scrollable area */}
@@ -413,10 +422,13 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                 {items.length > 0 && (
                   <div className="p-8 border-t border-gray-100 bg-white rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.02)]">
                     {/* Visual Helper Warnings when validations are missed */}
-                    {showValidation && (!customerInfo.name || !customerInfo.phone || !customerInfo.address) && (
+                    {showValidation && (!customerInfo.name || !customerInfo.phone || !customerInfo.address || customerInfo.phone.replace(/\D/g, '').length !== 11) && (
                       <div 
                         onClick={() => {
-                          const idToScroll = !customerInfo.name ? 'recipient-name' : (!customerInfo.phone ? 'recipient-phone' : 'recipient-address');
+                          const isPhoneInvalid = customerInfo.phone.replace(/\D/g, '').length !== 11;
+                          const idToScroll = !customerInfo.name 
+                            ? 'recipient-name' 
+                            : (!customerInfo.phone || isPhoneInvalid ? 'recipient-phone' : 'recipient-address');
                           document.getElementById(idToScroll)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                           document.getElementById(idToScroll)?.focus();
                         }}
@@ -424,8 +436,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onRemov
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                         <div className="flex-1 text-left">
-                          <p className="text-[10px] font-black uppercase tracking-widest">Delivery Details Missing</p>
-                          <p className="text-[9px] font-bold text-red-700">Missing fields found. Click to scroll and fill.</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest">
+                            {(!customerInfo.name || !customerInfo.phone || !customerInfo.address) ? 'Delivery Details Missing' : 'Invalid Phone Number'}
+                          </p>
+                          <p className="text-[9px] font-bold text-red-700">
+                            {(!customerInfo.name || !customerInfo.phone || !customerInfo.address) 
+                              ? 'Missing fields found. Click to scroll and fill.' 
+                              : 'Phone number must be exactly 11 digits (e.g. 03001234567).'}
+                          </p>
                         </div>
                       </div>
                     )}
